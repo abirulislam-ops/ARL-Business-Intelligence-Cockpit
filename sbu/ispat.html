@@ -1,0 +1,2514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akij Ispat — Product Intelligence Cockpit (3-Year)</title>
+<style>
+  :root{
+    --bg:#0d1220; --panel:#151c2e; --panel2:#1b2440; --line:#26314f;
+    --tx:#e6ecff; --muted:#8fa0c4; --dim:#5d6c8f;
+    --accent:#2f7dff; --accent2:#22c3aa; --gold:#f0b90b; --red:#ff5c7a;
+    --green:#2fd181; --orange:#ff8a3d; --violet:#a78bfa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:linear-gradient(180deg,#0d1220,#101830 60%);color:var(--tx);font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;line-height:1.5;padding:0 0 60px;font-size:16px}
+  header{padding:20px 26px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap}
+  header h1{font-size:22px;font-weight:700;letter-spacing:.2px}
+  header h1 span{color:var(--gold)}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  .badge{background:rgba(240,185,11,.12);border:1px solid rgba(240,185,11,.45);color:var(--gold);padding:5px 11px;border-radius:999px;font-size:12px;letter-spacing:.4px;white-space:nowrap}
+  nav{position:sticky;top:0;z-index:100;display:flex;gap:2px;padding:10px 26px 0;flex-wrap:wrap;background:rgba(13,18,32,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+  nav button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:10px 13px;cursor:pointer;font-size:14px}
+  nav button:hover{color:var(--tx)}
+  nav button.on{color:var(--gold);border-bottom-color:var(--gold)}
+  main{padding:18px 26px 40px;max-width:1300px;margin:0 auto}
+  section{display:none}
+  section.on{display:block}
+  .grid{display:grid;gap:12px}
+  .g5{grid-template-columns:repeat(5,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:1fr}
+  @media(max-width:1250px){.g5{grid-template-columns:repeat(2,1fr)}.g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .lab{color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.7px}
+  .kpi .val{font-size:24px;font-weight:600;margin-top:5px}
+  .kpi .note{color:var(--muted);font-size:12px;margin-top:4px}
+  .kpi .note.up{color:var(--green)} .kpi .note.down{color:var(--red)}
+  .card h3{margin:0 0 3px;font-size:15px;font-weight:600}
+  .card .hint{color:var(--muted);font-size:13px;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th{position:sticky;top:0;background:var(--panel2);color:var(--muted);font-weight:600;text-align:center;padding:8px 8px;border-bottom:1px solid var(--line);font-size:12.5px;text-transform:uppercase;letter-spacing:.45px;white-space:nowrap;z-index:2}
+  th[data-s]{cursor:pointer}
+  th[data-s]:hover{color:var(--tx)}
+  th.sorted{color:var(--gold)}
+  td:first-child,th:first-child{text-align:left}
+  td{padding:7px 8px;border-bottom:1px solid rgba(34,48,63,.6);text-align:center;white-space:nowrap}
+  tr:hover td{background:rgba(47,125,255,.06)}
+  tr.drill{cursor:pointer}
+  .tag{display:inline-block;padding:2px 7px;border-radius:6px;font-size:11.5px;border:1px solid}
+  .t-neg{color:var(--green);border-color:rgba(47,209,129,.35);background:rgba(47,209,129,.08)}
+  .t-pos{color:var(--red);border-color:rgba(255,92,122,.35);background:rgba(255,92,122,.08)}
+  .t-mut{color:var(--muted);border-color:var(--line);background:rgba(139,155,176,.07)}
+  .t-warn{color:var(--gold);border-color:rgba(240,185,11,.35);background:rgba(240,185,11,.08)}
+  .pos{color:var(--green)} .neg{color:var(--red)}
+  .scroll{max-height:600px;overflow:auto;border-radius:10px;border:1px solid var(--line)}
+  .toolbar{display:flex;gap:9px;align-items:center;margin-bottom:9px;flex-wrap:wrap}
+  .fbtn{background:var(--panel2);border:1px solid var(--line);color:var(--muted);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+  .fbtn:hover{color:var(--tx)}
+  .fbtn.on{background:rgba(47,125,255,.15);border-color:var(--accent);color:var(--tx)}
+  input[type=search],select{background:var(--panel2);border:1px solid var(--line);color:var(--tx);padding:7px 10px;border-radius:8px;font-size:14px;outline:none}
+  input[type=search]:focus,select:focus{border-color:var(--accent)}
+  input[type=search]{min-width:220px}
+  .note-box{background:rgba(47,125,255,.06);border:1px solid rgba(47,125,255,.25);border-radius:10px;padding:12px 14px;color:#c9d7ea;font-size:14px;margin:12px 0}
+  .note-box b{color:var(--tx)}
+  .warn{background:rgba(240,185,11,.06);border-color:rgba(240,185,11,.28)}
+  .insight{border-left:3px solid var(--gold);background:rgba(240,185,11,.05);border-radius:8px;padding:11px 14px;font-size:14px;color:#c9d7ea;margin:8px 0}
+  .insight b{color:var(--tx)}
+  .legend{display:flex;gap:14px;color:var(--muted);font-size:14px;margin-top:8px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px}
+  .small{font-size:12.5px;color:var(--muted)}
+  .chart{width:100%;overflow-x:auto}
+  .pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700}
+  .p-b500{background:rgba(240,185,11,.16);color:var(--gold)}
+  .p-b420{background:rgba(47,125,255,.16);color:#7fb0ff}
+  .guide{background:rgba(240,185,11,.07);border:1px solid rgba(240,185,11,.24);border-left:3px solid var(--gold);border-radius:10px;padding:12px 15px;color:#d9c9a8;font-size:14px;margin:0 0 12px;line-height:1.55}
+  .guide b{color:var(--gold)}
+  .guide .gl{color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;margin:8px 0 2px;display:block}
+  .guide .gl:first-child{margin-top:0}
+  .guide p{margin:2px 0 0}
+  .syn{margin-top:10px;padding:11px 14px;background:rgba(47,125,255,.045);border:1px solid rgba(47,125,255,.16);border-left:3px solid var(--accent);border-radius:9px;color:#c9d7ea;font-size:13.5px;line-height:1.55}
+  .syn b{color:var(--gold)}
+  .syn ul{margin:6px 0 0;padding-left:20px}
+  .syn li{margin:3px 0}
+  .syn li::marker{color:var(--gold)}
+  .lw{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:14px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+  .lw .ind{font-size:15px;font-weight:800;letter-spacing:1.5px;padding:7px 16px;border-radius:999px;text-transform:uppercase}
+  .lw .ind.loss{color:#fff;background:var(--red)}
+  .lw .ind.win{color:#fff;background:var(--green)}
+  .lw .m{display:flex;flex-direction:column;gap:3px}
+  .lw .m .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .lw .m .v{font-size:18px;font-weight:700}
+  .tip{position:fixed;background:#1a2536;border:1px solid #33405a;border-radius:8px;padding:8px 12px;font-size:13px;color:var(--tx);pointer-events:none;z-index:200;box-shadow:0 4px 14px rgba(0,0,0,.5);max-width:340px;line-height:1.5;white-space:pre-line;display:none}
+  svg [onmousemove]{cursor:crosshair}
+  .dda-title{font-size:17px;font-weight:700;color:var(--tx);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+  .dda-title .num{background:rgba(240,185,11,.15);color:var(--gold);border:1px solid rgba(240,185,11,.4);border-radius:6px;padding:1px 9px;font-size:12px;letter-spacing:.3px}
+  .dda-expl{background:rgba(47,125,255,.05);border:1px solid rgba(47,125,255,.2);border-left:3px solid var(--accent);border-radius:10px;padding:13px 15px;color:#c9d7ea;font-size:14px;line-height:1.6;margin-bottom:12px}
+  .dda-expl b{color:var(--tx)}
+  .dda-expl ul{margin:6px 0 0;padding-left:18px}
+  .dda-expl li{margin:3px 0}
+  table .pri-hi{color:var(--red);font-weight:700}
+  table .pri-md{color:var(--gold);font-weight:600}
+  table .pri-lo{color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Akij Ispat — <span>Product Intelligence Cockpit</span></h1>
+    <div class="sub">Price · margin · SKU momentum · competitors · market share · dealers · areas · growth · elasticity · declared price — follow the AEL cockpit pattern</div>
+  </div>
+  <div class="badge">FY2023-24 → FY2026-27 (July–June) &amp; Oct · per-ton clean window Jan'25–Nov'26</div>
+</header>
+
+<nav id="nav">
+  <button class="on" data-t="ov">Overview</button>
+  <button data-t="price">Price</button>
+  <button data-t="margin">GP / NP / Net</button>
+  <button data-t="sku">All SKUs</button>
+  <button data-t="mom">SKU month-on-month</button>
+  <button data-t="chg">Price change tracker</button>
+  <button data-t="pg">Declared price grid</button>
+  <button data-t="el">Elasticity</button>
+  <button data-t="comp">Competitor</button>
+  <button data-t="ms">Market Share</button>
+  <button data-t="dealer">Dealer</button>
+  <button data-t="area">Area</button>
+  <button data-t="growth">Growth</button>
+  <button data-t="promo">Promotion</button>
+  <button data-t="voc">Voice of Customer</button>
+  <button data-t="people">People</button>
+  <button data-t="dda">Direction · Decision · Action</button>
+  <button data-t="w2p">Where to Play · Whom to Play · How to Win</button>
+   <!-- <button data-t="mt">Method &amp; coverage</button>  -->
+</nav>
+
+<main>
+
+<!-- ============ OVERVIEW ============ -->
+<section id="ov" class="on">
+  <div class="guide"><span class="gl">What this answers</span><p>Your whole business in one screen — revenue, price direction and the biggest SKU moves across the clean window.</p><span class="gl">How to read it</span><p>KPIs summarise the window. Portfolio chart = monthly revenue (bars) + active SKUs (line). Breadth = share of SKUs raising (green) vs cutting (red) price vs the prior month.</p></div>
+  <div class="grid g5" id="ovKpis"></div>
+  <div class="lw" id="lossWinCard"></div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card">
+      <h3>Monthly revenue (৳ Cr) and active SKUs (Dec'22 → Nov'26)</h3>
+      <div class="hint">Bars: net revenue. Line: SKUs with sales that month. Nov'26 partial — excluded from "current" stats.</div>
+      <div class="chart" id="cPort"></div>
+    </div>
+    <div class="card">
+      <h3>Price direction breadth (Jan'25 → Nov'26)</h3>
+      <div class="hint">Share of rebar SKUs that raised vs cut realised price vs previous month (clean window). Green = raises, red = cuts.</div>
+      <div class="chart" id="cBreadth"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>What the full history says</h3>
+    <div id="insights"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Top 8 SKUs — price journey (Jan'25 → Nov'26)</h3>
+    <div class="hint">First vs last realised net price per MT in the clean window. Click a row to open its month-on-month view.</div>
+    <div class="scroll" id="cJourney"></div>
+  </div>
+</section>
+
+<!-- ============ PRICE ============ -->
+<section id="price">
+  <div class="guide"><span class="gl">What this answers</span><p>Realised net, gross and MRP price per MT — by SKU and over time.</p><span class="gl">How to read it</span><p><b>Net</b> = realised after discount; <b>Gross</b> ≈ net (Akij applies ~0% trade discount); <b>MRP</b> = announced list price. Use the selectors to isolate one SKU or overlay all.</p></div>
+  <div class="card">
+    <h3>Realised net price per metric ton — FY2025-26</h3>
+    <div class="hint">FY2025-26 is the first year with clean, consistent per-ton data across all rebar SKUs.</div>
+    <div id="priceTable"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Net vs Gross vs MRP — overall monthly compare (Jan'25 → Nov'26)</h3>
+    <div class="hint">Blended average across all rebar SKUs, Tk/MT. <b>Net</b> (solid blue) and <b>Gross</b> (dashed gold) are nearly identical — Akij applies ~0% trade discount, so the dashed Gross rides on top of the solid Net line. <b>MRP</b> (teal) is the announced list price. Hover any point for the exact value.</div>
+    <div class="chart" id="cThreePrice"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Monthly net price — by SKU (select) (Jan'25 → Nov'26)</h3>
+    <div class="hint">Realised net price per MT over time. "Overall" = blended average across all products; "All SKUs" overlays every grade.</div>
+    <select id="netPriceSel"></select>
+    <div class="chart" id="netPriceChart" style="margin-top:8px"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Monthly gross price — by SKU (select) (Jan'25 → Nov'26)</h3>
+    <div class="hint">Gross (list) price per MT. Gross ≈ net — Akij applies ~0% trade discount, so the spread is negligible (only Jan'25 shows a small gap).</div>
+    <select id="grossPriceSel"></select>
+    <div class="chart" id="grossPriceChart" style="margin-top:8px"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Monthly MRP price — by SKU (select) (Jan'25 → Nov'26)</h3>
+    <div class="hint">MRP / announced list price (<code>numItemPrice</code>) per MT — the base price before freight &amp; discount add-ons.</div>
+    <select id="mrpPriceSel"></select>
+    <div class="chart" id="mrpPriceChart" style="margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- ============ GP / NP / NET ============ -->
+<section id="margin">
+  <div class="guide"><span class="gl">What this answers</span><p>How price stacks against cost — gross profit, and net after commission &amp; freight.</p><span class="gl">How to read it</span><p>Waterfall = price → cost → GP → NP. Scrap chart = net price vs raw-material cost (monthly scrap purchase, a proxy — no production cost is posted). GP% uses a point-in-time average item cost, so treat it as a snapshot.</p></div>
+  <div class="note-box"><b>Basis:</b> <b>Net price</b> = realised after discounts. <b>GP%</b> = net price vs item average cost (<code>itm.tblItem.numAverageRate</code>). <b>NP%</b> = GP% minus dealer commission &amp; freight — directional; exact net margin needs the finance P&amp;L.</div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Price waterfall — FY2025-26 (avg across B500 &amp; B420, Tk/MT)</h3>
+      <div class="chart" id="waterfall"></div>
+    </div>
+    <div class="card">
+      <h3>Net price vs scrap (raw material) cost per MT — FY2025-26</h3>
+      <div class="hint">B500 DWR 10 mm realised price vs monthly scrap purchase cost (raw-material component only — excludes melting/rolling conversion).</div>
+      <div class="chart" id="gpnpTrend"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Margin by product (FY2025-26)</h3>
+    <div id="marginTable"></div>
+  </div>
+</section>
+
+<!-- ============ ALL SKUs ============ -->
+<section id="sku">
+  <div class="guide"><span class="gl">What this answers</span><p>Every rebar SKU — revenue, volume, price, month-on-month and elasticity in one sortable table.</p><span class="gl">How to read it</span><p>Click any header to sort; use search and the grade/elasticity/move filters; click a row to drill into its month-on-month view.</p></div>
+  <div class="grid g5" id="skuKpis" style="margin-bottom:12px"></div>
+  <div class="card">
+    <h3>Every SKU — price &amp; volume summary <span class="small" id="skuCount"></span></h3>
+    <div class="toolbar">
+      <input type="search" id="q" placeholder="Search SKU / grade…">
+      <select id="fGrade"><option value="all">All grades</option><option>B500</option><option>B420</option></select>
+      <select id="fEl"><option value="all">Any elasticity</option><option value="neg">Negative β (normal)</option><option value="pos">Positive β (anomalous)</option><option value="na">Not measurable</option></select>
+      <select id="fMove"><option value="all">Any move</option><option value="r3">Raised in last 3 mo</option><option value="big">Window move |Δ| &gt; 10%</option></select>
+    </div>
+    <div class="scroll" id="tSku"></div>
+    <div class="hint" style="margin-top:8px">Click any row to drill into its month-on-month view. Sort by clicking headers.</div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Monthly net revenue — by SKU (select) (Jan'23 → Nov'26)</h3>
+    <select id="skuSel"></select>
+    <div class="chart" id="skuRevMonthly" style="margin-top:8px"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Top SKU revenue — FY2025-26 (ranked)</h3>
+    <div class="hint">Net sales by SKU, Tk Cr.</div>
+    <div class="chart" id="skuRank"></div>
+  </div>
+</section>
+
+<!-- ============ SKU MONTH-ON-MONTH ============ -->
+<section id="mom">
+  <div class="guide"><span class="gl">What this answers</span><p>One SKU's volume, revenue and price month by month.</p><span class="gl">How to read it</span><p>Pick a SKU and range. The chart overlays volume and realised price; the table adds MoM price &amp; volume changes and realised-vs-MRP. Click a row in "All SKUs" to jump here.</p></div>
+  <div class="card">
+    <h3 id="momTitle">Month-on-month series (Jan'25 → Nov'26)</h3>
+    <div class="hint">Volume derived as net revenue ÷ realised net price (MT). Compare to the previous month with sales. Click rows in "All SKUs" to switch.</div>
+    <div class="toolbar">
+      <select id="momPick"></select>
+      <select id="momRange"><option value="all">Full window (Jan'25–Nov'26)</option><option value="12">Last 12 months</option><option value="6">Last 6 months</option></select>
+    </div>
+    <div class="chart" id="momChart"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Month table</h3>
+    <div class="scroll" id="tMom"></div>
+  </div>
+</section>
+
+<!-- ============ PRICE CHANGE TRACKER ============ -->
+<section id="chg">
+  <div class="guide"><span class="gl">What this answers</span><p>Where prices actually moved — the biggest realised jumps and every declared (MRP + Trade mill-rate) change.</p><span class="gl">How to read it</span><p>Realised moves are ≥2% month-on-month with a unit-typo guard. Declared changes show when the announced MRP or the daily Trade (mill) rate was revised.</p></div>
+  <div class="card">
+    <h3>Largest realised price moves <span class="small" id="chc"></span></h3>
+    <div class="hint">Month-on-month realised-price moves ≥ 2% within a SKU (ratio guard 0.5–2 excludes unit/ERP typos). Same-month volume change shown. Click a row to drill.</div>
+    <div class="toolbar"><input type="search" id="chq" placeholder="Filter SKU / month…"></div>
+    <div class="scroll" id="tJump"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Declared (MRP) price changes</h3>
+    <div class="hint">Moves of ≥ 0.5% in the announced MRP list price — the "declared" price book effect.</div>
+    <div class="scroll" id="tDecl"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Declared Trade (mill-rate) changes</h3>
+    <div class="hint">Every revision of the daily Trade/mill rate (<code>itm.tblPriceSetup</code>, channel 108). The mill rate moves frequently — these are the declared sell-rate changes.</div>
+    <div class="toolbar"><input type="search" id="tq" placeholder="Filter month…"></div>
+    <div class="scroll" id="tTradeDecl"></div>
+  </div>
+</section>
+
+<!-- ============ DECLARED PRICE GRID ============ -->
+<section id="pg">
+  <div class="guide"><span class="gl">What this answers</span><p>What Akij has declared for each SKU — the daily Trade (mill) rate and MRP — and how far the realised price sits from it.</p><span class="gl">How to read it</span><p><b>Trade rate</b> = the daily-updated mill rate (<code>itm.tblPriceSetup</code>, channel "Trade"). <b>MRP</b> = announced list price. <b>Gap</b> = realised vs Trade. Ispat has no separate distributor (DP) tier — rebar trades at a single mill rate, so MRP sits almost on top of Trade.</p><span class="gl">Source</span><p><code>itm.tblPriceSetup</code> (channel 108 "Trade", since Sep-2024) + <code>numItemPrice</code> (MRP).</p></div>
+  <div class="grid g4" id="pgKpis" style="margin-bottom:12px"></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Declared Trade (mill) rate vs realised net price (Sep'24 → Nov'26)</h3>
+      <div class="hint">Monthly: the mill rate (month-end) against the overall realised net price per MT. Rebar trades at the mill rate, so the two track closely.</div>
+      <div class="chart" id="cTradeTrend"></div>
+    </div>
+    <div class="card">
+      <h3>Realised price vs declared Trade (per SKU) (latest)</h3>
+      <div class="hint">How far each SKU's latest realised price sits above (teal) or below (red) the current Trade rate, in %.</div>
+      <div class="chart" id="cGap"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Declared price grid — every rebar SKU</h3>
+    <div class="hint">Current Trade rate, latest MRP and latest realised price, with realised-vs-Trade and MRP-vs-Trade gaps.</div>
+    <div class="scroll" id="tGrid"></div>
+  </div>
+</section>
+
+<!-- ============ ELASTICITY ============ -->
+<section id="el">
+  <div class="guide"><span class="gl">What this answers</span><p>How strongly volume responds to price, SKU by SKU.</p><span class="gl">What β means</span><p>β is own-price elasticity — the % change in volume for a 1% change in price. <b>β = −2</b>: a 10% price rise is linked to a ~20% volume drop. <b>β = −0.5</b>: a 10% rise only trims volume ~5%. <b>β &gt; 0</b>: price and volume move together (scrap-cost pass-through, not demand).</p><span class="gl">How to read it</span><p>Hover any bar, point or table cell for the full interpretation. Volume is derived (revenue ÷ price), so β is directional, not a causal demand curve. <b>R²</b> shows how reliable the fit is; <b>Pairs</b> is the number of month-over-month observations used.</p></div>
+  <div class="grid g4" id="elKpis" style="margin-bottom:12px"></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Elasticity by SKU (β = Δln volume ÷ Δln price) (Jan'25 → Nov'26)</h3>
+      <div class="hint">First-difference estimator over consecutive clean months. Teal = β&lt;0 (normal: price up → volume down). Red = β&gt;0 (anomalous).</div>
+      <div class="chart" id="cEl"></div>
+    </div>
+    <div class="card">
+      <h3>Price vs volume, within SKU (Jan'25 → Nov'26)</h3>
+      <div class="hint">Each point = one SKU-month; ln(price) and ln(volume) demeaned to the SKU's own mean. Colour = sign of that SKU's β.</div>
+      <div class="chart" id="cScatter"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Elasticity table</h3>
+    <div id="tEl"></div>
+    <div class="note-box warn" style="margin-top:10px"><b>Read with care.</b> Volume is derived (revenue ÷ price), so β is directional only — demand here is project-driven and stock-outs, discounts and freight distort the estimate. Treat β as a signal to investigate, not a causal demand curve.</div>
+  </div>
+</section>
+
+<!-- ============ COMPETITOR ============ -->
+<section id="comp">
+  <div class="guide"><span class="gl">What this answers</span><p>Akij's mill rate against its peers.</p><span class="gl">How to read it</span><p>The survey covers 25 mills but only <b>May'24–Jan'25</b> — a full 3-year competitor series is not in the ERP. Ranking shows each mill's average mill-gate rate over that window.</p></div>
+  <div class="note-box"><b>Coverage:</b> market price survey (<code>oms.tblCompetitorPriceHeader/Row</code>) holds 25 competitors, <b>May 2024 → Jan 2025</b>. A full 3-year competitor series is not in the ERP.</div>
+  <div class="card">
+    <h3>Mill-rate trend — Akij vs top competitors (May'24 → Jan'25)</h3>
+    <div class="hint">Monthly average mill-gate price, Tk/MT.</div>
+    <div class="chart" id="compTrend"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Competitor ranking (avg mill rate, May'24–Jan'25)</h3>
+    <div id="compTable"></div>
+  </div>
+</section>
+
+<!-- ============ MARKET SHARE ============ -->
+<section id="ms">
+  <div class="guide"><span class="gl">What this answers</span><p>Akij's share of the Bangladesh steel market.</p><span class="gl">How to read it</span><p>Akij is 7th of the named mills at ~2.6% and the <b>fastest-growing (+21.7% YoY)</b>. Share comes from an external sheet; monthly figures cover Dec'25–Sep'26.</p></div>
+  <div class="grid g4" id="msKpis" style="margin-bottom:12px"></div>
+  <div class="card">
+    <h3>Steel market share — FY2023-24 vs FY2024-25 (%)</h3>
+    <div class="hint">Akij Ispat highlighted — 7th of the named mills, fastest-growing (+21.7% YoY).</div>
+    <div class="chart" id="msLadder"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Akij Ispat share — monthly (Dec'25 → Sep'26)</h3>
+    <div class="hint">Share hovered 2.7–3.5%, peaking 3.49% (Mar'26).</div>
+    <div class="chart" id="msTrend"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Steel market share — full table</h3>
+    <div id="msTable"></div>
+  </div>
+</section>
+
+<!-- ============ DEALER ============ -->
+<section id="dealer">
+  <div class="guide"><span class="gl">What this answers</span><p>Dealer commission and how it tracks sales.</p><span class="gl">How to read it</span><p>Commission (left axis) vs net sales (right axis). The by-type chart shows the incentive mix (Monthly, General, Performance…).</p></div>
+  <div class="grid g4" id="commKpis" style="margin-bottom:12px"></div>
+  <div class="card">
+    <h3>Dealer commission vs sales — monthly (FY2023-24 → FY2026-27)</h3>
+    <div class="hint">Dealer commission (left axis) against net sales (right axis) — compare the two trends.</div>
+    <div class="chart" id="commMonthly"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Commission by incentive type (total) (FY2023-24 → FY2026-27)</h3>
+    <div class="chart" id="commType"></div>
+  </div>
+</section>
+
+<!-- ============ AREA ============ -->
+<section id="area">
+  <div class="guide"><span class="gl">What this answers</span><p>Where volume and value land by delivery zone — <b>cumulative across FY2022-23 → FY2026-27 (up to Oct '26)</b>.</p><span class="gl">How to read it</span><p>Top zones ranked by cumulative value; the table adds volume (MT) for each zone.</p></div>
+  <div class="card">
+    <h3>Top 12 delivery zones — cumulative value (FY2022-23 → FY2026-27, up to Oct '26)</h3>
+    <div class="chart" id="zoneBar"></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>All top zones — value &amp; volume (FY2022-23 → FY2026-27, up to Oct '26)</h3>
+    <div id="zoneTable"></div>
+  </div>
+</section>
+
+<!-- ============ GROWTH ============ -->
+<section id="growth">
+  <div class="guide"><span class="gl">What this answers</span><p>Net revenue by fiscal year (July–June), with delivery counts as an activity proxy.</p><span class="gl">How to read it</span><p>FY2025-26 vs FY2024-25 growth plus the 2-yr CAGR. FY2026-27 is a partial year (5 months, July–November).</p></div>
+  <div class="grid g5" id="growthKpis" style="margin-bottom:12px"></div>
+  <div class="card">
+    <h3>Revenue &amp; volume by year (FY2023-24 → FY2026-27)</h3>
+    <div class="chart" id="revYear"></div>
+  </div>
+</section>
+
+<!-- ============ PROMOTION ============ -->
+<section id="promo">
+  <div class="guide"><span class="gl">What this is</span><p>Akij Ispat's marketing spend, activities and budgets versus competitors — and where we are under-investing.</p><span class="gl">How to read it</span><p>Three lenses: <b>our budget &amp; spend</b> (brand marketing), <b>competitor activity</b> (digital presence &amp; trade incentives), and the <b>gap</b> (where we under-invest and what to fix).</p></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Digital presence — Facebook followers (latest)</h3>
+      <div class="hint">Akij Ispat trails every major mill on owned digital reach.</div>
+      <div class="chart" id="promoSocial"></div>
+    </div>
+    <div class="card">
+      <h3>Trade incentives — Tk per MT (May'26 survey)</h3>
+      <div class="hint">Anwar leads on trade spend; Akij is mid-pack but priced lowest.</div>
+      <div class="chart" id="promoIncentive"></div>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Offline campaigns — ours vs competitors (Jan–Apr'26)</h3>
+      <div class="hint">Akij's "12% stronger" USP is the sharpest, most product-led message; competitors lean on leadership claims.</div>
+      <div class="scroll" id="promoCampaign"></div>
+    </div>
+    <div class="card">
+      <h3>Digital spend &amp; reach (Dec'25–Feb'26)</h3>
+      <div class="hint">BSRM outspends us 5× and reaches 5× more people online.</div>
+      <div class="chart" id="promoDigital"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Total marketing spend vs revenue contribution (Dec'25–Feb'26)</h3>
+    <div class="hint">Akij spends the most as a % of revenue (1.58%) but the least in absolute terms — a scale gap, not an effort gap.</div>
+    <div class="scroll" id="promoSpendTable"></div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>Competitor activity &amp; spend — the comparison</h3>
+      <div class="scroll" id="promoCompTable"></div>
+    </div>
+    <div class="card">
+      <h3>Where we under-invest &amp; what to fix</h3>
+      <div class="scroll" id="promoGap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIRECTION · DECISION · ACTION ============ -->
+<section id="dda">
+  <div class="guide"><span class="gl">What this is</span><p>A management read-out — where Akij Ispat is heading, what to decide, and what to do — each grounded in the data shown across the other tabs.</p><span class="gl">How to read it</span><p>Three blocks: <b>Direction</b> (the trend), <b>Decision</b> (the choices) and <b>Action</b> (the next moves). Each pairs a plain-language explanation with a <b>proof table</b> and a <b>chart</b>.</p></div>
+
+  <!-- 1 · DIRECTION -->
+  <div class="dda-title"><span class="num">1</span>Direction — where the business is heading</div>
+  <div class="dda-expl" id="ddaDirExpl"></div>
+  <div class="grid g2">
+    <div class="card"><h3>Chart — revenue trajectory (Dec'22 → Nov'26)</h3><div class="hint">Monthly net revenue, Dec'22 → Nov'26.</div><div class="chart" id="ddaDirChart"></div></div>
+    <div class="card"><h3>Proof</h3><div class="scroll" id="ddaDirTable"></div></div>
+  </div>
+
+  <!-- 2 · DECISION -->
+  <div class="dda-title"><span class="num">2</span>Decision — what to decide</div>
+  <div class="dda-expl" id="ddaDecExpl"></div>
+  <div class="grid g2">
+    <div class="card"><h3>Chart — where the money &amp; margin are (FY2025-26)</h3><div class="hint">Top SKUs by FY25-26 net revenue; colour = gross-margin tier (blue &lt;6%, teal 6–9%, gold ≥10%).</div><div class="chart" id="ddaDecChart"></div></div>
+    <div class="card"><h3>Proof</h3><div class="scroll" id="ddaDecTable"></div></div>
+  </div>
+
+  <!-- 3 · ACTION -->
+  <div class="dda-title"><span class="num">3</span>Action — what to do now</div>
+  <div class="dda-expl" id="ddaActExpl"></div>
+  <div class="grid g2">
+    <div class="card"><h3>Chart — share momentum &amp; target (Dec'25 → Sep'26)</h3><div class="hint">Monthly steel-market share with a 3.5% target line (the Mar'26 peak).</div><div class="chart" id="ddaActChart"></div></div>
+    <div class="card"><h3>Proof</h3><div class="scroll" id="ddaActTable"></div></div>
+  </div>
+
+  <!-- 4 · LOSS-MAKING SKUs -->
+  <div class="dda-title"><span class="num">4</span>Loss-making / at-risk SKUs</div>
+  <div class="dda-expl" id="ddaLossExpl"></div>
+  <div class="grid g2">
+    <div class="card"><h3>Chart — net margin by SKU (FY2025-26)</h3><div class="hint">Estimated net-profit % per SKU (gross margin − ~2.1% commission &amp; freight). Red = below 4% (at-risk), green = healthy.</div><div class="chart" id="ddaLossChart"></div></div>
+    <div class="card"><h3>Proof</h3><div class="scroll" id="ddaLossTable"></div></div>
+  </div>
+
+  <!-- 5 · LOSS RECOVERY PLAN -->
+  <div class="dda-title"><span class="num">5</span>Loss Recovery Plan — FY26-27 (Q1 &amp; October)</div>
+  <div class="dda-expl" id="ddaRecoveryExpl"></div>
+  <div class="grid g2">
+    <div class="card"><h3>Chart — Jul–Oct revenue, FY25-26 vs FY26-27</h3><div class="hint">Grouped bars by month. July &amp; October are the loss months; August &amp; September over-recover.</div><div class="chart" id="ddaRecoveryChart"></div></div>
+    <div class="card"><h3>Proof — the loss</h3><div class="scroll" id="ddaRecoveryTable"></div></div>
+  </div>
+</section>
+
+<!-- ============ WHERE TO PLAY · WHOM TO PLAY · HOW TO WIN ============ -->
+<section id="w2p">
+  <div class="guide"><span class="gl">What this is</span><p>The zone map of where Akij Ispat lost steel market share from Q4 FY2025-26 (April-June) to Q1 FY 2026-27 (Jul-Sep) &amp; Oct — in <b>position</b> (share), <b>volume</b> (MT) and <b>revenue</b> (Cr) — and the playbook to win it back.</p><span class="gl">How to read it</span><p>Three blocks: <b>Where to play</b> (the divisions we lost), <b>Whom to play</b> (who took the share), and <b>How to win</b> (the SMART plan).</p></div>
+
+  <!-- 1 · WHERE TO PLAY -->
+  <div class="dda-title"><span class="num">1</span>Where to play — divisions we lost</div>
+  <div class="dda-expl" id="w2pWhereExpl"></div>
+  <div class="grid g2">
+    <div class="card"><h3>Chart — revenue loss by division</h3><div class="hint">Timeline: Q4 FY2025-26 (April-June) → Q1 FY 2026-27 (Jul-Sep) &amp; Oct. Dhaka alone is ~92% of the revenue loss; Chattogram is a distant second.</div><div class="chart" id="w2pRegionChart"></div></div>
+    <div class="card"><h3>Division wise Market share Loss</h3><div class="scroll" id="w2pRegionTable"></div></div>
+  </div>
+
+  <!-- 2 · WHOM TO PLAY -->
+  <div class="dda-title"><span class="num">2</span>Whom to play — who took the share</div>
+  <div class="dda-expl" id="w2pWhomExpl"></div>
+  <!-- 3 · HOW TO WIN -->
+  <div class="dda-title"><span class="num">3</span>How to win — the playbook</div>
+  <div class="dda-expl" id="w2pHowExpl"></div>
+</section>
+
+<!-- ============ VOICE OF CUSTOMER ============ -->
+<section id="voc">
+  <div class="guide"><span class="gl">What this is</span><p>The voice of Akij Ispat's lost dealers &amp; corporate customers — who they are, where they are, and why they left (CRM call-back, Oct 2026).</p><span class="gl">How to read it</span><p>Filter the register by segment, then read the root-cause, call-status and win-back actions below.</p></div>
+  <div class="grid g5" id="vocKpis" style="margin-bottom:12px"></div>
+
+  <!-- 1 · DEALER & CUSTOMER REGISTER -->
+  <div class="dda-title"><span class="num">1</span>Dealer &amp; customer register — by segment</div>
+  <div class="card">
+    <div class="toolbar">
+      <span style="color:var(--muted);font-size:13px">Segment:</span>
+      <button class="fbtn on" data-seg="all" onclick="vocFilter('all')">All (97)</button>
+      <button class="fbtn" data-seg="Dealer" onclick="vocFilter('Dealer')">Dealers (45)</button>
+      <button class="fbtn" data-seg="Corporate" onclick="vocFilter('Corporate')">Corporate (46)</button>
+      <button class="fbtn" data-seg="Sister Concern" onclick="vocFilter('Sister Concern')">Sister Concern (6)</button>
+      <input type="search" id="vocSearch" placeholder="Search customer…" oninput="vocSearch()" style="margin-left:auto">
+    </div>
+    <div class="scroll" id="vocTable"></div>
+    <div class="toolbar" id="vocPager" style="margin-top:8px;margin-bottom:0;justify-content:space-between"></div>
+    <div class="hint" id="vocCount" style="margin-top:4px;margin-bottom:0"></div>
+  </div>
+
+  <!-- 2 · WHY THEY LEFT -->
+  <div class="dda-title"><span class="num">2</span>Why they left</div>
+  <div class="card">
+    <h3>Reason mentions</h3>
+    <div class="hint">From the responded dealers (Oct 2026 call-back). Price is the #1 churn driver.</div>
+    <div class="chart" id="vocReason"></div>
+  </div>
+
+  <!-- 3 · CALL STATUS -->
+  <div class="card" style="margin-top:12px">
+    <h3>Call status — response rate (89 calls)</h3>
+    <div class="scroll" id="vocCallStatus"></div>
+  </div>
+
+  <!-- 4 · WIN-BACK -->
+  <div class="card" style="margin-top:12px">
+    <h3>What brings them back + recommended actions</h3>
+    <div id="vocActions"></div>
+  </div>
+</section>
+
+<!-- ============ PEOPLE ============ -->
+<section id="people">
+  <div class="guide"><span class="gl">What this is</span><p>Which sales officers own the lost customers — the people side of the recovery plan.</p><span class="gl">How to read it</span><p>31 officers ranked by loss risk, arranged by region, area &amp; territory. Click any officer for the full profile. Source: lost-dealer CRM + KPI vs Lost Analysis, Oct 2026.</p></div>
+  <div class="grid g5" id="peopleKpis" style="margin-bottom:12px"></div>
+
+  <div class="dda-title"><span class="num">1</span>Sales Force Analysis</div>
+  <div class="card">
+    <h3>Officers by region, area &amp; territory</h3>
+    <div class="hint">91 lost customers traced to 31 officers, arranged by their demarcation. Click any officer for the full profile. 8 are high-risk (score &gt; 25).</div>
+    <div class="scroll" id="peopleRank"></div>
+  </div>
+  <div id="peopleProfile"></div>
+</section>
+
+<!-- ============ METHOD & COVERAGE ============ -->
+<section id="mt">
+  <div class="guide"><span class="gl">What this answers</span><p>Where every number comes from and its limits.</p><span class="gl">How to read it</span><p>Check the coverage table before drawing conclusions — some series are partial (competitor survey) or derived (volume, elasticity, GP cost proxy).</p></div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Sources</h3>
+      <table>
+        <thead><tr><th>Data</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue, SKU &amp; price series</td><td>iBOSDDD ERP <code>oms</code> sales (BU 224 · Akij Ispat)</td></tr>
+          <tr><td>Avg item cost (GP basis)</td><td><code>itm.tblItem.numAverageRate</code></td></tr>
+          <tr><td>MRP / list price</td><td><code>numItemPrice</code></td></tr>
+          <tr><td>Declared Trade (mill) rate</td><td><code>itm.tblPriceSetup</code> · channel 108 "Trade"</td></tr>
+          <tr><td>Dealer commission</td><td><code>arl_erp</code> incentive postings (separate DB)</td></tr>
+          <tr><td>Competitor mill rates</td><td><code>oms.tblCompetitorPriceHeader/Row</code></td></tr>
+          <tr><td>Steel market share</td><td>Provided Google Sheet (gid 663260340)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Method</h3>
+      <ul style="margin-left:16px;font-size:14px;color:#c9d7ea">
+        <li><b>Net price</b> = realised invoice value ÷ MT, after discounts.</li>
+        <li><b>GP%</b> = (net price − avg cost) ÷ net price. <b>Est. NP%</b> = GP% − ~2.1% (commission ~1.3% + freight ~0.8%).</li>
+        <li><b>Volume (MT) in MoM &amp; elasticity views</b> = monthly net revenue ÷ realised net price — derived, directional only.</li>
+        <li><b>Elasticity β</b> = OLS slope of Δln(volume) on Δln(price) between consecutive months; needs ≥ 8 pairs and |β| ≤ 8.</li>
+        <li><b>Move detection</b> = |Δprice| ≥ 2% MoM with ratio guard 0.5–2 (excludes unit breaks).</li>
+        <li>Mixed-unit rebar quantity entries from 2023–24 are excluded from per-ton series (revenue values remain valid).</li>
+        <li><b>Last-month convention:</b> the running month (Nov'26) is partial and excluded from "current" statistics.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <h3>Coverage</h3>
+    <table>
+      <thead><tr><th>Series</th><th>Window</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Monthly total revenue</td><td>Dec'22 → Nov'26</td><td><span class="tag t-neg">Full</span></td></tr>
+        <tr><td>Monthly revenue by SKU</td><td>Jan'23 → Nov'26</td><td><span class="tag t-neg">Full</span></td></tr>
+        <tr><td>Per-ton price (net/gross/MRP)</td><td>Jan'25 → Nov'26</td><td><span class="tag t-neg">Full (clean)</span></td></tr>
+        <tr><td>Declared Trade (mill) rate</td><td>Sep'24 → Nov'26</td><td><span class="tag t-neg">Full (daily)</span></td></tr>
+        <tr><td>Per-ton price</td><td>FY2023-24 / FY2024-25</td><td><span class="tag t-warn">Mixed units — excluded</span></td></tr>
+        <tr><td>Competitor mill rates</td><td>May'24 → Jan'25</td><td><span class="tag t-warn">Partial (survey)</span></td></tr>
+        <tr><td>Steel market share</td><td>FY23-24, FY24-25, monthly Dec'25→Sep'26</td><td><span class="tag t-warn">External sheet</span></td></tr>
+        <tr><td>Dealer commission</td><td>Jan'23 → Sep'26</td><td><span class="tag t-neg">Full</span></td></tr>
+        <tr><td>Elasticity (β)</td><td>Jan'25 → Nov'26</td><td><span class="tag t-warn">Derived volume</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<div id="tip" class="tip"></div>
+
+<script>
+/* ============================================================
+   EMBEDDED DATA  (live from iBOSDDD, BU 224 = Akij Ispat)
+   ============================================================ */
+var D = {
+  monthly: [
+    [2022,12,352106],[2023,1,712100668],[2023,2,610404011],[2023,3,721393646],[2023,4,498711977],[2023,5,862372722],[2023,6,870276646],[2023,7,492060707],[2023,8,515995716],[2023,9,466944361],[2023,10,1012984235],[2023,11,687551902],[2023,12,732369890],
+    [2024,1,1051680503],[2024,2,1036812637],[2024,3,963838536],[2024,4,556921429],[2024,5,1218075351],[2024,6,533656929],[2024,7,792483195],[2024,8,543395634],[2024,9,637833204],[2024,10,786100640],[2024,11,648176603],[2024,12,1223267834],
+    [2025,1,1531269650],[2025,2,1364061884],[2025,3,1347239493],[2025,4,1531901249],[2025,5,1233397233],[2025,6,886689907],[2025,7,1009754887],[2025,8,880204494],[2025,9,1231704507],[2025,10,1103609758],[2025,11,1222315403],[2025,12,1233453328],
+    [2026,1,1820215538],[2026,2,1696763256],[2026,3,1573142608],[2026,4,1642725273],[2026,5,1001277118],[2026,6,1626815829],[2026,7,854020758],[2026,8,1185923062],[2026,9,1767378272],[2026,10,875202603],[2026,11,201848880]
+  ],
+  yearlyRev: {2022:352106, 2023:8183166860, 2024:10000589744, 2025:14881732419, 2026:14421823836},
+  yearlyDel: {2022:[2,264003], 2023:[6443,7001916678], 2024:[9499,8955216109], 2025:[13121,13030163654], 2026:[13682,12378848729]},
+  cat: {
+    "MS Rod": {2023:8136005608, 2024:9924782741, 2025:14217209867, 2026:13671127755},
+    "Wastage & By-Products": {2023:47160876, 2024:67459760, 2025:358391928, 2026:532272746}
+  },
+  skuMonthly: {
+    "B500 DWR 10 mm":[275371819,216726635,282364699,170844974,283743053,332318060,190552860,194230419,176100662,353640321,237266903,243414108,349336378,307859407,304652806,199260864,419910083,191731334,270025523,206016464,255682368,288966286,226639732,417827856,413239268,392258782,400691016,422604671,441843144,292677768,388462445,320482002,428532618,361101427,388783726,365109417,594073793,525074609,543326893,474567240,317057840,472415201,309020219,431290103,629347104,301589611,40896455],
+    "B500 DWR 16 mm":[178727622,150053177,158565587,100147963,175938302,177563614,109196077,101651262,93815323,225391101,156879605,170224367,223504686,235560144,203272880,118317555,235509067,109251134,137980225,100630905,119726988,169888164,142553657,288199896,305934430,280941117,277171206,284534934,241514896,177840654,199919089,183809809,266086183,225016091,258875611,241344600,413349228,398767114,369203951,322795104,186752571,361778611,180803583,258671734,377368780,200778267,38508845],
+    "B500 DWR 12 mm":[105318370,94375525,118167184,76292026,115443943,125187718,65892655,61687615,53916093,130894839,86193822,98479123,132188472,132411298,143799837,84709897,173113720,80916554,95079603,69745804,77044925,99335367,81526499,170279751,244665096,209246994,200041052,219131911,191768344,128137537,133151400,101815203,185496587,159095144,178950612,154489943,257366486,243733252,212325780,239117669,162930208,211736254,122521383,149873702,220844977,99410697,24238250],
+    "B500 DWR 20 mm":[53019100,53625380,64426922,55839435,85999655,82127325,41158750,60742005,56763338,96001439,74938502,76077063,107397361,93928982,103973573,46761719,117659474,42692506,83871553,68016592,72151865,82428659,73857491,135288476,159582983,151683144,125975704,130527158,129287259,75466863,102758869,102483335,134866267,137255076,136072805,122181535,168637415,187154643,189399851,225161613,100686382,202216893,126015568,172068940,240127329,128711085,28636970],
+    "B500 DWR 8 mm":[73922517,67767550,67747754,67264262,101037671,121373713,43478365,41186290,28158809,120831241,61750479,82365419,114961891,96651589,98053971,55205668,123557167,49532089,64484299,35675055,40394607,67068549,45762529,114401433,100295425,74226055,98677906,107458158,63395595,62125097,61083279,51048875,91162616,56419904,64019694,68606273,119945315,98853418,98666666,77152061,52670840,90752645,36377468,60941706,85866324,38209730,7768125],
+    "B500 DWR 25 mm":[15054840,14117993,12196100,5321038,19940337,15427590,9905250,12038475,13703325,28901565,33106499,11370856,17356250,27273180,31985093,7307594,25373834,10176065,22374681,14858533,13711389,29459635,17358685,23119641,82981179,91837310,71857294,116724894,42261359,40514773,32177280,32713626,38051710,53667195,43793153,49774485,41865036,75965884,48987426,108358893,39546272,71997722,23311207,41760551,87262053,35166762,12316030],
+    "B500 DWR 32 mm":[0,0,0,339500,229600,0,0,0,0,2790000,313250,0,0,588250,796500,268800,1395000,0,0,0,0,0,503250,30780,52998662,26364667,43094315,103479145,253500,42519300,1879771,20800500,8856000,27587600,36130600,20325000,31049320,31620000,2748500,36479500,2312500,10982000,762450,8550000,23674500,0,1046400],
+    "B420 DWR 10 mm":[265500,3957000,3232000,2552800,21853840,1918750,6507200,14525150,7561508,8506573,5422462,14124588,23288864,23388460,15321808,8554048,22604246,8522485,31375180,14216938,16561682,15836665,7477264,22107421,48612086,42146041,24736550,37491149,29370504,19331732,20433050,16635801,21875926,29017218,15776784,23386071,32142032,34160776,28006590,26321990,8733658,13470591,8141764,11275970,23363675,16675250,0],
+    "B420 DWR 12 mm":[8691000,184000,752300,693600,17586800,1823500,9849500,8714750,7487211,13526094,6162179,9359862,15208515,19751962,16801450,6208692,19360721,7033340,30035580,11714342,21949008,9253685,17336585,18486420,38452870,24902283,26894440,25900188,16570390,5853320,11627385,16329096,9368977,10891812,13412598,17443777,24225355,10415228,22854650,14009864,1563777,17082036,10105483,6670010,14688712,7832400,0],
+    "B420 DWR 16 mm":[0,450000,1365900,368000,8929380,2062950,6313200,6939300,8390192,1645407,2205000,6571771,6118403,44792961,3301486,5252700,12575818,3970510,16643100,3278050,6163400,6359500,9622850,4402000,15525580,14428460,11567250,17929160,21364900,13465300,4645780,11386054,2894278,7740140,16401650,12102758,17527368,15037010,7359420,24434560,5095650,50706637,3458921,3198196,6404752,1956300,0],
+    "B420 DWR 20 mm":[0,6451000,1595900,9688000,16682440,1886600,4023850,3178950,5050500,5111814,7478500,7251124,28643188,14625913,7057040,8297100,12693992,7047680,11700960,7277850,4042100,4817400,5228550,7683010,12714150,17842370,11668600,10677740,12471100,2621900,8665145,8383366,5002642,10525966,12287350,15533898,7789993,12272650,5455540,13081772,186000,22733992,3521201,6462316,11931816,5722800,0]
+  },
+  priceNet: {
+    "B500 DWR 10 mm":[86375,85317,84245,84200,84470,84338,84607,83009,82082,81207,79481,79175,79671,83080,89502,91410,93318,92073,89105,87799,87712,89055,89087],
+    "B500 DWR 16 mm":[90353,85036,84340,84156,84535,84132,84528,82872,81958,81311,79285,78893,79607,82757,89506,93994,93059,93234,88924,87850,87677,89076,89116],
+    "B500 DWR 12 mm":[88581,85398,84298,84155,84689,84225,84158,82793,81873,80453,79162,78834,79473,82505,89426,90967,92507,91797,88885,87623,87197,89082,88768],
+    "B500 DWR 20 mm":[87904,86558,84274,84148,85620,83943,84400,82683,81892,80765,79307,79026,79263,82522,88147,93906,92785,92596,90659,87512,87450,88999,88920],
+    "B500 DWR 8 mm":[98800,84793,84051,85507,85096,84413,84877,83266,82729,82728,79741,78910,80274,84646,90091,94469,94983,92931,89293,88283,88092,89515,89804],
+    "B500 DWR 25 mm":[89910,85492,85075,83997,85799,83525,83556,82327,80798,78580,78844,79567,78278,82276,85878,88910,91942,90654,89398,86957,85874,88269,88796],
+    "B500 DWR 32 mm":[87416,85818,84979,84300,84500,83371,82700,81891,80509,78373,78035,78173,77802,81705,91616,92646,92500,92675,89700,85500,86403,null,87200],
+    "B420 DWR 10 mm":[89649,84548,83795,83519,83779,82600,82946,82071,79685,79405,77975,76945,78465,84453,85770,93208,92166,90921,87189,94620,85581,87168,null],
+    "B420 DWR 12 mm":[110468,84554,83783,83283,83794,82943,82810,81114,79573,81470,77885,77380,77620,81579,84387,92983,92095,91453,87622,94258,85073,87512,null],
+    "B420 DWR 16 mm":[87628,85540,83942,83236,83587,82255,70755,81620,81163,81958,89700,78469,107438,83077,85485,93066,93071,90182,89354,88683,86714,88121,null],
+    "B420 DWR 20 mm":[81188,84681,84249,83524,83811,83766,83625,82012,80318,83615,77376,78382,79516,81275,84977,93201,93000,90577,87136,89221,86318,88043,null]
+  },
+  priceGross: {
+    "B500 DWR 10 mm":[87255,85317,84245,84200,84470,84338,84607,83009,82082,81207,79481,79175,79671,83080,89502,91410,93318,92073,89105,87799,87712,89055,89087],
+    "B500 DWR 16 mm":[89986,85036,84340,84156,84535,84132,84528,82872,81958,81311,79285,78893,79607,82757,89506,93994,93059,93234,88924,87850,87677,89076,89116],
+    "B500 DWR 12 mm":[88877,85398,84298,84155,84689,84225,84158,82793,81873,80453,79162,78834,79473,82505,89426,90967,92507,91797,88885,87623,87197,89082,88768],
+    "B500 DWR 20 mm":[88202,86558,84274,84148,85620,83943,84400,82683,81892,80765,79307,79026,79263,82522,88147,93906,92785,92596,90659,87512,87450,88999,88920],
+    "B500 DWR 8 mm":[94935,84793,84051,85507,85096,84413,84877,83266,82729,82728,79741,78910,80274,84646,90091,94469,94983,92931,89293,88283,88092,89515,89804],
+    "B500 DWR 25 mm":[88959,85492,85075,83997,85799,83525,83556,82327,80798,78580,78844,79567,78278,82276,85878,88910,91942,90654,89398,86957,85874,88269,88796],
+    "B500 DWR 32 mm":[87416,85818,84979,84300,84500,83371,82700,81891,80509,78373,78035,78173,77802,81705,91616,92646,92500,92675,89700,85500,86403,null,87200],
+    "B420 DWR 10 mm":[89649,84548,83795,83519,83779,82600,82946,82071,79685,79405,77975,76945,78465,84453,85770,93208,92166,90921,87189,94620,85581,87168,null],
+    "B420 DWR 12 mm":[109514,84554,83783,83283,83794,82943,82810,81114,79573,81470,77885,77380,77620,81579,84387,92983,92095,91453,87622,94258,85073,87512,null],
+    "B420 DWR 16 mm":[88565,85540,83942,83236,83587,82255,70755,81620,81163,81958,89700,78469,107438,83077,85485,93066,93071,90182,89354,88683,86714,88121,null],
+    "B420 DWR 20 mm":[83838,84681,84249,83524,83811,83766,83625,82012,80318,83615,77376,78382,79516,81275,84977,93201,93000,90577,87136,89221,86318,88043,null]
+  },
+  priceOverallNet:[87503,85352,82947,81106,84777,82714,81048,81341,81303,78794,77346,68752,73104,77120,86965,83000,81605,89141,80052,86563,82191,84665,89869],
+  priceOverallGross:[87504,85352,82947,81106,84777,82714,81048,81341,81303,78794,77346,68752,73104,77120,86965,83000,81605,89141,80052,86563,82191,84665,89869],
+  priceMRP: {
+    "B500 DWR 10 mm":[84595,84595,83997,82855,83940,84165,84750,83172,82018,81088,79301,78723,79773,83146,89594,94239,93078,91606,88732,87748,87747,89131,89678],
+    "B500 DWR 16 mm":[83653,84368,83990,82163,84088,84131,84745,83192,81976,81175,79320,78727,79800,83141,89518,94396,93060,91586,88724,87740,87855,89181,89667],
+    "B500 DWR 12 mm":[82643,84438,83977,81952,84087,84154,84751,83210,82033,81188,79125,78842,79825,83106,89665,94353,93058,91606,88708,87741,87832,89313,89677],
+    "B500 DWR 20 mm":[78962,82974,83162,78813,83150,83822,84656,83020,81889,80995,78893,78535,79723,83039,89135,94306,93026,91550,88716,87639,87830,89182,89666],
+    "B500 DWR 8 mm":[81358,83584,82772,79851,82866,84187,84881,83298,82152,81415,78911,78994,79991,83189,89568,94462,93126,91656,88624,87883,88006,89503,89763],
+    "B500 DWR 25 mm":[79116,84789,84263,81357,83194,83691,84100,82661,81167,80013,78180,78040,79172,82796,88471,94880,92699,91434,88712,87236,87532,89052,89643],
+    "B500 DWR 32 mm":[85371,85481,85566,78407,84500,83700,82700,82383,81400,78100,78277,78125,78050,81683,87850,93063,92500,91750,89700,85500,86733,null,87200],
+    "B420 DWR 10 mm":[84860,84709,83882,83656,83853,83133,83422,82274,80383,78818,78148,77270,77887,82021,86529,93411,92213,91231,88200,86636,86850,87986,null],
+    "B420 DWR 12 mm":[82170,84628,84018,83573,83917,83204,83233,81766,80450,78825,78120,77138,77819,82358,86204,93442,92055,91225,87416,86540,86611,88275,null],
+    "B420 DWR 16 mm":[84578,84792,83985,83705,83885,83423,77964,81875,81062,79164,78192,77488,78152,82372,85666,93508,93055,91056,89061,86453,87408,88177,null],
+    "B420 DWR 20 mm":[84252,84843,83968,83681,83948,83750,83963,82392,80600,79241,78072,77466,77973,81933,86591,93448,93000,91060,87563,86640,87425,88087,null]
+  },
+  priceOverallMRP:[82455,84437,84816,81546,84479,84680,85570,83077,81877,80974,78964,80603,82407,85439,89336,94042,92609,91364,90035,88351,87671,89463,92706],
+  sku: [
+    ["Akij Ispat B500 DWR 10 mm","B500", 2956574515, 3437909105, 4615786287],
+    ["Akij Ispat B500 DWR 16 mm","B500", 1798154002, 2084395305, 2942988623],
+    ["Akij Ispat B500 DWR 12 mm","B500", 1131848916, 1340151731, 2105989826],
+    ["Akij Ispat B500 DWR 20 mm","B500", 800718915, 1028028254, 1508141001],
+    ["Akij Ispat B500 DWR 8 mm","B500", 876884073, 905748851, 898518878],
+    ["Akij Ispat B500 DWR 25 mm","B500", 191083869, 240354581, 696354260],
+    ["Akij Ispat B500 DWR 32 mm","B500", 3672350, 3582580, 384289061],
+    ["Akij Ispat B420 DWR 10 mm","B420", 90427371, 209255062, 328812912],
+    ["Akij Ispat B420 DWR 12 mm","B420", 84830796, 193140300, 217647136],
+    ["Akij Ispat B420 DWR 16 mm","B420", 45241100, 122480778, 149451310],
+    ["Akij Ispat B420 DWR 20 mm","B420", 68398678, 119114783, 128394228],
+    ["Akij Ispat B420 DWR 25 mm","B420", 33586895, 146411438, 99749833]
+  ],
+  price25: [
+    ["Akij Ispat B500 DWR 10 mm","B500", 83196, 78813],
+    ["Akij Ispat B500 DWR 16 mm","B500", 83491, 78871],
+    ["Akij Ispat B500 DWR 12 mm","B500", 83405, 78963],
+    ["Akij Ispat B500 DWR 20 mm","B500", 83378, 79024],
+    ["Akij Ispat B500 DWR 8 mm","B500", 84837, 71792],
+    ["Akij Ispat B500 DWR 25 mm","B500", 83632, 78752],
+    ["Akij Ispat B500 DWR 32 mm","B500", 83128, 69659],
+    ["Akij Ispat B420 DWR 10 mm","B420", 82935, 78015],
+    ["Akij Ispat B420 DWR 12 mm","B420", 85901, 73774],
+    ["Akij Ispat B420 DWR 16 mm","B420", 83460, 74506],
+    ["Akij Ispat B420 DWR 20 mm","B420", 82055, 72341],
+    ["Akij Ispat B420 DWR 25 mm","B420", 82524, 71064]
+  ],
+  priceMonths:["Jan25","Feb25","Mar25","Apr25","May25","Jun25","Jul25","Aug25","Sep25","Oct25","Nov25","Dec25","Jan26","Feb26","Mar26","Apr26","May26","Jun26","Jul26","Aug26","Sep26","Oct26","Nov26"],
+  p10:[86376,85318,84246,84200,84471,84338,84607,83010,82083,81207,79481,79176,79672,83081,89503,91410,93318,92073,89105,87800,87713,89056,89087],
+  p16:[90354,85037,84340,84156,84535,84133,84528,82873,81959,81311,79285,78893,79607,82757,89506,93995,93060,93235,88925,87850,87678,89077,89116],
+  comm: [
+    [2023,1,7897203],[2023,7,18972470],[2023,8,6615900],[2023,9,12480360],[2023,10,20228935],[2023,11,9716924],[2023,12,8193143],
+    [2024,1,13720605],[2024,2,11737440],[2024,3,15308471],[2024,4,8212114],[2024,5,21245578],[2024,6,9702760],[2024,7,19126882],[2024,8,7965530],[2024,9,7722445],[2024,10,10692736],[2024,11,11046140],[2024,12,13846305],
+    [2025,1,25210410],[2025,2,10043637],[2025,3,13588435],[2025,4,11836605],[2025,5,13261148],[2025,6,10541117],[2025,7,17870901],[2025,8,15805717],[2025,9,19143127],[2025,10,15424188],[2025,11,18315161],[2025,12,17743896],
+    [2026,1,33562805],[2026,2,35952650],[2026,3,33616556],[2026,4,31152911],[2026,5,19928363],[2026,6,20685695],[2026,7,15606284],[2026,8,24557954],[2026,9,22165014]
+  ],
+  commType: [
+    ["Monthly",437049170],["General",54462023],["Performance",47631306],["MonthlyTarget",44044918],
+    ["DeliveryIncentive",33770744],["WithTarget",15503954],["Delivery",14426550],["SpecialIncentive",4982685],
+    ["top20customer",4480000],["QuarterlyTarget",2610246],["WithoutTarget",969152],["PriceAdjustment",513764]
+  ],
+  zones: [
+    ["Cumilla Adarsha Sadar",2335380995,26565],["Noakhali Sadar",1851928690,21020],["Mirpur",1525939134,17599],
+    ["Gazipur Sador",1402175396,16001],["Daudkandi",1318761779,15137],["Narayangonj Sador",1278883611,15547],
+    ["Poba (Rajshahi)",1100536048,11904],["Sylhet Sadar",936607833,10581],["Feni Sadar",934002974,10823],
+    ["Ashulia",812864097,9267],["Uttara Poshim",800105841,9260],["Demra",755072781,8675],
+    ["Tongi",726014960,8854],["Savar",699037207,8074],["Keranigonj Model",674314302,9379],
+    ["Rupgonj",648094803,7615],["Khulna Sadar",637998363,7313],["Lakshmipur Sadar",630042541,7243],
+    ["Gojariya",604771603,8144],["Mymensingh Sadar",590720660,6800],["Mohammadpur",560388977,6533],
+    ["Uttara Purba",545608320,6273],["Narshingdi Sador",506391764,5931],["Baridhara",476700952,5509],["Vatara",464861726,5422]
+  ],
+  comp: [
+    ["Abul Khair Steel",92891,94342,5725],["GPH Ispat",92644,94510,5517],["BSRM",92622,94109,3592],
+    ["KSRM",87681,89369,992],["Anwar Ispat",87514,87479,900],["Rahim Steel",86990,87014,878],
+    ["AKIJ ISPAT",86727,87475,2459],["Rahima Ispat",86510,81981,0],["Metrocem Ispat",85548,86048,813],
+    ["Golden Ispat",85100,86200,884],["HM Steel",85026,86126,878],["Sitalpur Auto",84050,85260,119],
+    ["Chakda Steel",83966,82720,507],["Salam Steel (SCRM)",83648,84020,689],["Shahariar Steel",83187,83706,471],
+    ["Karnafully Steel",82591,82591,0],["Al-Aksa Steel",81655,81655,0],["Premier Steel",81554,81560,0],
+    ["Zahir Steel",81549,82122,0],["Bandar Steel",81484,81983,0],["HKG Steel",81432,80955,0],
+    ["Rani RRM",81348,81612,0],["SS Steel",81271,81739,0],["Ambient Steel",80275,79724,0],
+    ["Mohammadi Steel",79846,79259,0]
+  ],
+  compTrend: {
+    "BSRM":[96000,96000,96000,96000,92921,91575,90000,85579,89818],
+    "AKS":[95882,96000,96000,96000,94132,92000,90474,85842,89682],
+    "GPH":[92906,95500,95500,95500,92789,91315,90000,90079,90182],
+    "KSRM":[91894,91187,90450,90167,88637,87340,84063,81468,83745],
+    "Anwar":[91406,91367,90583,89833,87637,86525,83842,80974,87000],
+    "Rahim":[91000,90933,89972,89278,87316,85825,83684,80211,86136],
+    "AKIJ":[90281,90500,89500,89083,86763,85455,83400,80921,86045]
+  },
+  compMonths:["May24","Jun24","Jul24","Aug24","Sep24","Oct24","Nov24","Dec24","Jan25"],
+  ms: [
+    ["BSRM",23.81,27.58,1375085,1545083],
+    ["AKS",14.13,17.57,816133,984192],
+    ["GPH",10.19,12.21,588568,683751],
+    ["KSRM",7.02,6.60,405252,369830],
+    ["RRM",3.78,3.70,218182,207271],
+    ["Anwar Ispat",3.27,1.79,188723,100379],
+    ["AKIJ ISPAT",2.06,2.59,119202,145051],
+    ["Others",35.74,27.96,2063941,1565963]
+  ],
+  msMonths:["Dec25","Jan26","Feb26","Mar26","Apr26","May26","Jun26","Jul26","Aug26","Sep26"],
+  msAkijShare:[2.56,2.83,3.36,3.49,3.47,2.72,2.97,2.89,2.96,2.92],
+  msAkijSales:[13274,17251,19369,16450,17140,9375,13080,8800,10987,12523],
+  tradeMonthly:[86000,84500,84000,84000,84200,84200,85000,82500,82500,81000,79000,79000,82000,85000,95000,94300,93000,91500,88000,88500,89300,89900,89900],
+  tradeChanges:[
+    ["2024-09-11",86500,-0.6],["2024-09-29",86000,-0.6],["2024-10-06",85500,-0.6],["2024-10-09",84700,-0.9],["2024-10-14",85200,0.6],["2024-10-23",85500,0.4],["2024-11-03",85200,-0.4],["2024-11-05",85000,-0.2],["2024-11-06",84700,-0.4],["2024-11-07",84500,-0.2],["2024-11-10",83500,-1.2],["2024-11-14",83000,-0.6],["2024-11-19",82500,-0.6],["2024-12-01",82000,-0.6],["2024-12-05",81000,-1.2],["2024-12-10",80500,-0.6],["2024-12-15",80000,-0.6],["2024-12-24",80500,0.6],["2024-12-27",81500,1.2],["2024-12-31",82000,0.6],["2025-01-01",83000,1.2],["2025-01-04",85000,2.4],["2025-01-06",86500,1.8],["2025-01-07",87000,0.6],["2025-01-16",86000,-1.1],["2025-01-23",85500,-0.6],["2025-01-30",86000,0.6],["2025-02-02",85500,-0.6],["2025-02-04",84500,-1.2],["2025-02-16",85000,0.6],["2025-02-19",84500,-0.6],["2025-03-02",84000,-0.6],["2025-03-16",84500,0.6],["2025-03-19",84000,-0.6],["2025-04-20",84500,0.6],["2025-04-24",84000,-0.6],["2025-04-25",84500,0.6],["2025-04-30",84000,-0.6],["2025-05-01",84200,0.2],["2025-05-04",84000,-0.2],["2025-05-06",84800,1],["2025-05-08",84300,-0.6],["2025-05-11",84500,0.2],["2025-05-15",84200,-0.4],["2025-05-22",84000,-0.2],["2025-05-26",84200,0.2],["2025-07-01",85000,1],["2025-07-15",84800,-0.2],["2025-07-29",85000,0.2],["2025-08-04",84500,-0.6],["2025-08-06",84000,-0.6],["2025-08-16",83000,-1.2],["2025-08-27",82500,-0.6],["2025-09-07",82000,-0.6],["2025-09-09",82300,0.4],["2025-09-11",82500,0.2],["2025-09-21",82300,-0.2],["2025-09-23",82000,-0.4],["2025-09-27",82500,0.6],["2025-10-09",82200,-0.4],["2025-10-12",82000,-0.2],["2025-10-14",81700,-0.4],["2025-10-16",81500,-0.2],["2025-10-19",81000,-0.6],["2025-10-23",81300,0.4],["2025-10-29",81000,-0.4],["2025-11-06",80500,-0.6],["2025-11-09",80000,-0.6],["2025-11-11",79500,-0.6],["2025-11-16",79000,-0.6],["2025-12-01",79500,0.6],["2025-12-04",79000,-0.6],["2026-01-10",79200,0.3],["2026-01-12",79500,0.4],["2026-01-17",79800,0.4],["2026-01-19",80000,0.3],["2026-01-21",80500,0.6],["2026-01-24",81000,0.6],["2026-01-27",81500,0.6],["2026-01-28",82000,0.6],["2026-02-03",82500,0.6],["2026-02-10",83500,1.2],["2026-02-16",84000,0.6],["2026-02-18",84200,0.2],["2026-02-22",84500,0.4],["2026-02-24",84700,0.2],["2026-02-28",85000,0.4],["2026-03-03",85500,0.6],["2026-03-04",86500,1.2],["2026-03-05",88500,2.3],["2026-03-06",89000,0.6],["2026-03-07",91500,2.8],["2026-03-08",93000,1.6],["2026-03-09",94000,1.1],["2026-03-30",94700,0.7],["2026-03-31",95000,0.3],["2026-04-19",94000,-1.1],["2026-04-20",95000,1.1],["2026-04-22",94000,-1.1],["2026-04-25",95000,1.1],["2026-04-26",94300,-0.7],["2026-05-06",93300,-1.1],["2026-05-07",93000,-0.3],["2026-06-01",89000,-4.3],["2026-06-02",92000,3.4],["2026-06-03",91500,-0.5],["2026-06-06",92000,0.5],["2026-06-22",91500,-0.5],["2026-07-02",91000,-0.5],["2026-07-05",90500,-0.5],["2026-07-08",89500,-1.1],["2026-07-14",89000,-0.6],["2026-07-20",88000,-1.1],["2026-08-17",88500,0.6],["2026-09-01",87700,-0.9],["2026-09-03",88000,0.3],["2026-09-15",88200,0.2],["2026-09-20",88500,0.3],["2026-09-22",88700,0.2],["2026-09-23",89000,0.3],["2026-09-28",89300,0.3],["2026-10-06",89800,0.6],["2026-10-28",89900,0.1]
+  ]
+};
+/* ============ fiscal-year data (fresh ERP pull, FY = July–June) ============ */
+(function(){
+  D.yearlyRev = {2022:4275611778, 2023:9268892199, 2024:12525816530, 2025:16041982002, 2026:4884373575};
+  D.yearlyDel = {2022:[3172,3585793783], 2023:[8443,8390732333], 2024:[11414,11343406576], 2025:[15102,14044202771], 2026:[4641,4047707252]};
+  D.cat = {
+    "MS Rod": {2022:4272683902, 2023:9178308699, 2024:12363304090, 2025:15410332052, 2026:4766762031},
+    "Wastage & By-Products": {2022:2927876, 2023:90583500, 2024:162512440, 2025:631649949, 2026:117611544}
+  };
+  var skuFy = {
+    "B500 DWR 10 mm":[3167956147,4028472882,5178987213],
+    "B500 DWR 16 mm":[1982573204,2526917074,3427697965],
+    "B500 DWR 12 mm":[1244203928,1786002885,2240208541],
+    "B500 DWR 20 mm":[918094714,1288137749,1808874687],
+    "B500 DWR 8 mm":[915732981,873964709,930381587],
+    "B500 DWR 25 mm":[228497986,567059373,636898684],
+    "B500 DWR 32 mm":[6151800,269243620,230771291],
+    "B420 DWR 10 mm":[158327392,309263212,269960487],
+    "B420 DWR 12 mm":[139464276,247349111,169224555],
+    "B420 DWR 16 mm":[108076748,140749550,175331305],
+    "B420 DWR 20 mm":[110459651,108745730,121918314],
+    "B420 DWR 25 mm":[115666432,118068470,77319029]
+  };
+  D.sku.forEach(function(s){
+    var k = s[0].replace("Akij Ispat ","");
+    if(skuFy[k]){ s[2]=skuFy[k][0]; s[3]=skuFy[k][1]; s[4]=skuFy[k][2]; }
+  });
+})();
+/* ============ helpers ============ */
+function cr(v){ if(v==null||isNaN(v))return "—"; var c=v/1e7; if(c>=100)return "৳ "+Math.round(c).toLocaleString("en-US")+" Cr"; if(c>=10)return "৳ "+c.toFixed(0)+" Cr"; return "৳ "+c.toFixed(1)+" Cr"; }
+function taka(v){ if(v==null||isNaN(v))return"—"; return "৳ "+Math.round(v).toLocaleString("en-US"); }
+function mt(v){ if(v==null||isNaN(v))return "—"; return Math.round(v).toLocaleString("en-US"); }
+function pct(a,b){ if(!b)return null; return (a-b)/b*100; }
+function pf(v){ if(v==null||isNaN(v))return "—"; return (v>=0?"+":"")+v.toFixed(1)+"%"; }
+function mn(m){ return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m-1]; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+/* tooltip */
+var TIP=document.getElementById("tip");
+window.tip=function(ev,text){ TIP.innerHTML=text; TIP.style.display="block"; var x=ev.clientX+16,y=ev.clientY+16; if(x+340>innerWidth)x=ev.clientX-340; if(y+150>innerHeight)y=ev.clientY-150; TIP.style.left=x+"px"; TIP.style.top=y+"px"; };
+window.untip=function(){ TIP.style.display="none"; };
+/* synopsis: append a bulleted takeaway under a chart/table container */
+window.syn=function(id, bullets){
+  var el=document.getElementById(id); if(!el) return;
+  var h='<div class="syn"><b>SMART synopsis</b><ul>';
+  bullets.forEach(function(b){ h+='<li>'+b+'</li>'; });
+  h+='</ul></div>';
+  el.insertAdjacentHTML("afterend", h);
+};
+
+/* ============ derived window series (Jan'25 → Nov'26, 23 mo) ============ */
+var WINLAB = D.priceMonths;
+var SKUKEYS = Object.keys(D.priceNet);
+// revenue aligned to window: skuMonthly runs Jan'23..Nov'26 (47) → window is the last 23
+var winRev = {};
+SKUKEYS.forEach(function(k){ winRev[k] = D.skuMonthly[k].slice(24); });
+var winRevTotal = D.monthly.slice(25).map(function(m){return m[2];}); // index 25 = Jan'25
+// derived volume (MT) = revenue / realised net price
+function fillv(a){ for(var i=0;i<a.length;i++) if(a[i]==null) a[i]=NaN; return a; }
+var winVol = {};
+SKUKEYS.forEach(function(k){
+  winVol[k] = winRev[k].map(function(r,i){ var p=D.priceNet[k][i]; return (r>0 && p!=null) ? r/p : null; });
+});
+var winVolTotal = WINLAB.map(function(_,i){
+  var s=0, any=false;
+  SKUKEYS.forEach(function(k){ var v=winVol[k][i]; if(v!=null){s+=v; any=true;} });
+  return any?s:null;
+});
+var winMRP = {}; SKUKEYS.forEach(function(k){ winMRP[k]=D.priceMRP[k]; });
+
+/* elasticity: OLS slope of Δln(vol) on Δln(price), consecutive non-null months */
+function elasticity(pArr, vArr){
+  var xs=[], ys=[];
+  for(var i=1;i<pArr.length;i++){
+    var p1=pArr[i-1],p2=pArr[i],v1=vArr[i-1],v2=vArr[i];
+    if(p1==null||p2==null||v1==null||v2==null||p1<=0||p2<=0||v1<=0||v2<=0) continue;
+    var dp=Math.log(p2/p1), dq=Math.log(v2/v1);
+    if(!isFinite(dp)||!isFinite(dq)) continue;
+    xs.push(dp); ys.push(dq);
+  }
+  var n=xs.length; if(n<8) return null;
+  var mx=0,my=0; xs.forEach(function(x){mx+=x;}); ys.forEach(function(y){my+=y;}); mx/=n; my/=n;
+  var sxy=0,sxx=0,syy=0;
+  for(var i=0;i<n;i++){ var dx=xs[i]-mx, dy=ys[i]-my; sxy+=dx*dy; sxx+=dx*dx; syy+=dy*dy; }
+  if(sxx===0) return null;
+  var b=sxy/sxx; if(Math.abs(b)>8) return null;
+  var r2 = syy>0 ? (sxy*sxy)/(sxx*syy) : 0;
+  return {b:b, r2:r2, n:n};
+}
+var EL = {};
+SKUKEYS.forEach(function(k){ EL[k]=elasticity(D.priceNet[k], winVol[k]); });
+var OVEL = elasticity(D.priceOverallNet, winVolTotal);
+
+/* price moves tracker (|Δ|>=2%, ratio guard 0.5–2) */
+var JUMPS=[];
+SKUKEYS.forEach(function(k){
+  var p=D.priceNet[k], v=winVol[k];
+  for(var i=1;i<p.length;i++){
+    var a=p[i-1], b=p[i];
+    if(a==null||b==null||a<=0) continue;
+    var ratio=b/a; if(ratio<0.5||ratio>2) continue;
+    var ch=(b-a)/a*100;
+    if(Math.abs(ch)>=2) JUMPS.push({sku:k, idx:i, from:a, to:b, ch:ch, vol: v[i]!=null&&v[i-1]!=null&&v[i-1]>0 ? (v[i]-v[i-1])/v[i-1]*100 : null});
+  }
+});
+JUMPS.sort(function(x,y){return Math.abs(y.ch)-Math.abs(x.ch);});
+
+/* declared MRP changes (|Δ|>=0.5%) */
+var DECL=[];
+SKUKEYS.forEach(function(k){
+  var m=winMRP[k];
+  for(var i=1;i<m.length;i++){
+    var a=m[i-1], b=m[i];
+    if(a==null||b==null||a<=0) continue;
+    var ch=(b-a)/a*100;
+    if(Math.abs(ch)>=0.5) DECL.push({sku:k, idx:i, from:a, to:b, ch:ch});
+  }
+});
+DECL.sort(function(x,y){ return y.idx-x.idx || x.sku.localeCompare(y.sku); });
+
+/* ============ SVG chart engine ============ */
+var NS="http://www.w3.org/2000/svg";
+function el(t,a){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); return e; }
+function txt(x,y,s,o){ var t=el("text",{x:x,y:y,fill:o&&o.fill||"#c9d7ea","font-size":o&&o.size||"13.5", "text-anchor":o&&o.anchor||"middle"}); t.textContent=s; return t; }
+var C={line:"#26314f",axis:"#33406a",tx:"#e6ecff",muted:"#8fa0c4",bg:"#0d1220"};
+
+function lineChart(container, series, labels, opts){
+  opts=opts||{}; var W=920,H=300,L=64,R=14,T=14,B=36;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var vals=[]; series.forEach(function(s){s.data.forEach(function(v){if(v!=null&&!isNaN(v))vals.push(v);});});
+  var min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
+  if(opts.min!=null)min=opts.min; if(opts.max!=null)max=opts.max;
+  if(min===max){min-=1;max+=1;}
+  var pad=(max-min)*0.08; if(opts.pad!==false){min-=pad;max+=pad;}
+  var x0=L,x1=W-R,y0=T,y1=H-B;
+  function X(i){return x0+(i/(labels.length-1))*(x1-x0);}
+  function Y(v){return y1-(v-min)/(max-min)*(y1-y0);}
+  var steps=5; for(var g=0;g<=steps;g++){ var v=min+(max-min)*g/steps; var yy=Y(v);
+    svg.appendChild(el("line",{x1:x0,y1:yy,x2:x1,y2:yy,stroke:C.line,"stroke-width":1}));
+    svg.appendChild(txt(x0-7,yy+3,(opts.yfmt||fmtY)(v),{anchor:"end"}));
+  }
+  svg.appendChild(el("line",{x1:x0,y1:y0,x2:x0,y2:y1,stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(el("line",{x1:x0,y1:y1,x2:x1,y2:y1,stroke:C.axis,"stroke-width":1}));
+  if(opts.ytitle){ var yt=txt(14,(y0+y1)/2,opts.ytitle,{anchor:"middle",fill:C.muted,size:"12.5"}); yt.setAttribute("transform","rotate(-90 14 "+(y0+y1)/2+")"); svg.appendChild(yt); }
+  var colors=opts.colors||["#2f7dff","#22c3aa","#f0b90b","#ff5c7a","#ff8a3d","#a78bfa","#2fd181"];
+  series.forEach(function(s,si){
+    var col=colors[si%colors.length];
+    var d="", open=false;
+    s.data.forEach(function(v,i){ if(v==null||isNaN(v)){ open=false; return; } d+=(open?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1); open=true; });
+    svg.appendChild(el("path",{d:d,fill:"none",stroke:col,"stroke-width":s.w||2.2,"stroke-opacity":.95,"stroke-dasharray":s.dash||""}));
+    if(opts.dots!==false) s.data.forEach(function(v,i){ if(v!=null&&!isNaN(v)){
+      svg.appendChild(el("circle",{cx:X(i),cy:Y(v),r:2.6,fill:col,stroke:C.bg,"stroke-width":1}));
+      svg.appendChild(el("circle",{cx:X(i),cy:Y(v),r:8,fill:"transparent",onmousemove:"tip(event,'"+esc(s.name)+"<br>"+labels[i]+": "+esc((opts.tipfmt||opts.yfmt||fmtY)(v))+"')",onmouseout:"untip()"}));
+    } });
+  });
+  var step=Math.max(1,Math.ceil(labels.length/13));
+  labels.forEach(function(lb,i){ if(i%step===0||i===labels.length-1) svg.appendChild(txt(X(i),H-12,lb,{size:"12"})); });
+  if(series.length>1) legend(container,series,colors);
+  return svg;
+}
+function legend(container,series,colors){
+  var h='<div class="legend">'; series.forEach(function(s,i){ h+='<span><i style="background:'+colors[i%colors.length]+'"></i>'+esc(s.name)+'</span>'; }); h+='</div>';
+  container.insertAdjacentHTML("beforeend",h);
+}
+function fmtY(v){ var c=v/1e7; if(c>=100) return Math.round(c)+"Cr"; if(c>=1) return c.toFixed(1)+"Cr"; return c.toFixed(2)+"Cr"; }
+function fmtMT(v){ return (v/1e3).toFixed(0)+"k"; }
+function ffill(a){ var last=null; for(var i=0;i<a.length;i++){ if(a[i]==null){ a[i]=last; } else { last=a[i]; } } return a; }
+var ALLC=["#f0b90b","#2f7dff","#22c3aa","#ff5c7a","#ff8a3d","#a78bfa","#2fd181","#7fb0ff","#ff9ecb","#9be8d8","#e6ecff"];
+
+function dualLineChart(container, s1, s2, labels, opts){
+  opts=opts||{}; var W=920,H=300,L=64,R=64,T=14,B=36;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  function mm(arr){ var f=arr.filter(function(v){return v!=null&&!isNaN(v);}); var mn2=Math.min.apply(null,f), mx2=Math.max.apply(null,f); if(mn2===mx2){mn2-=1;mx2+=1;} var p=(mx2-mn2)*0.08; return [mn2-p, mx2+p]; }
+  var m1=mm(s1.data), m2=mm(s2.data);
+  var min1=m1[0],max1=m1[1],min2=m2[0],max2=m2[1];
+  var x0=L,x1=W-R,y0=T,y1=H-B;
+  function X(i){return x0+(i/(labels.length-1))*(x1-x0);}
+  function Y1(v){return y1-(v-min1)/(max1-min1)*(y1-y0);}
+  function Y2(v){return y1-(v-min2)/(max2-min2)*(y1-y0);}
+  var steps=5;
+  for(var g=0;g<=steps;g++){ var v=min1+(max1-min1)*g/steps; var yy=Y1(v);
+    svg.appendChild(el("line",{x1:x0,y1:yy,x2:x1,y2:yy,stroke:C.line,"stroke-width":1}));
+    svg.appendChild(txt(x0-7,yy+3,(opts.yfmt||fmtY)(v),{anchor:"end"}));
+  }
+  for(var g=0;g<=steps;g++){ var v=min2+(max2-min2)*g/steps; var yy=Y2(v);
+    svg.appendChild(txt(x1+7,yy+3,(opts.y2fmt||fmtY)(v),{anchor:"start",fill:C.muted}));
+  }
+  svg.appendChild(el("line",{x1:x0,y1:y0,x2:x0,y2:y1,stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(el("line",{x1:x0,y1:y1,x2:x1,y2:y1,stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(el("line",{x1:x1,y1:y0,x2:x1,y2:y1,stroke:C.axis,"stroke-width":1}));
+  if(opts.ytitle){ var yt=txt(14,(y0+y1)/2,opts.ytitle,{anchor:"middle",fill:C.muted,size:"12.5"}); yt.setAttribute("transform","rotate(-90 14 "+(y0+y1)/2+")"); svg.appendChild(yt); }
+  if(opts.y2title){ var yt2=txt(W-14,(y0+y1)/2,opts.y2title,{anchor:"middle",fill:C.muted,size:"12.5"}); yt2.setAttribute("transform","rotate(-90 "+(W-14)+" "+(y0+y1)/2+")"); svg.appendChild(yt2); }
+  function drawSeries(s,color,Y){
+    var d="", open=false;
+    s.data.forEach(function(v,i){ if(v==null||isNaN(v)){open=false;return;} d+=(open?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1); open=true; });
+    svg.appendChild(el("path",{d:d,fill:"none",stroke:color,"stroke-width":s.w||2.2,"stroke-opacity":.95}));
+    if(opts.dots!==false) s.data.forEach(function(v,i){ if(v!=null&&!isNaN(v)){
+      svg.appendChild(el("circle",{cx:X(i),cy:Y(v),r:2.4,fill:color,stroke:C.bg,"stroke-width":1}));
+      svg.appendChild(el("circle",{cx:X(i),cy:Y(v),r:8,fill:"transparent",onmousemove:"tip(event,'"+esc(s.name)+"<br>"+labels[i]+": "+esc((opts.tipfmt||opts.yfmt||fmtY)(v))+"')",onmouseout:"untip()"}));
+    } });
+  }
+  drawSeries(s1,opts.c1||"#22c3aa",Y1);
+  drawSeries(s2,opts.c2||"#2f7dff",Y2);
+  var step=Math.max(1,Math.ceil(labels.length/13));
+  labels.forEach(function(lb,i){ if(i%step===0||i===labels.length-1) svg.appendChild(txt(X(i),H-12,lb,{size:"12"})); });
+  var h='<div class="legend"><span><i style="background:'+(opts.c1||"#22c3aa")+'"></i>'+esc(s1.name)+' (left)</span><span><i style="background:'+(opts.c2||"#2f7dff")+'"></i>'+esc(s2.name)+' (right)</span></div>';
+  container.insertAdjacentHTML("beforeend",h);
+  return svg;
+}
+
+function barChart(container, items, opts){
+  opts=opts||{}; var W=920,H=Math.max(240,items.length*24+40),L=150,R=10,T=12,B=12;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var max=0; items.forEach(function(i){max=Math.max(max,i.value);});
+  var y0=T,y1=H-B,x0=L,x1=W-R; var bh=(y1-y0)/items.length;
+  items.forEach(function(it,idx){
+    var bw=Math.max(2,(it.value/max)*(x1-x0));
+    var yy=y0+idx*bh+4;
+    svg.appendChild(el("rect",{x:x0,y:yy,width:bw,height:bh-8,rx:3,fill:it.color||"#2f7dff"}));
+    svg.appendChild(txt(x0-8,yy+bh/2-4,it.label,{anchor:"end",fill:C.muted,size:"13"}));
+    svg.appendChild(txt(x0+bw+5,yy+bh/2-4,(opts.fmt||String)(it.value),{anchor:"start",fill:C.tx,size:"12.5"}));
+  });
+  return svg;
+}
+function groupedBar(container, categories, series, opts){
+  opts=opts||{}; var W=920,H=320,L=64,R=14,T=14,B=44;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var max=0; series.forEach(function(s){s.data.forEach(function(v){max=Math.max(max,v);});});
+  var x0=L,x1=W-R,y0=T,y1=H-B;
+  var step=5; for(var g=0;g<=step;g++){ var v=max*g/step; var yy=y1-(v/max)*(y1-y0);
+    svg.appendChild(el("line",{x1:x0,y1:yy,x2:x1,y2:yy,stroke:C.line,"stroke-width":1}));
+    svg.appendChild(txt(x0-7,yy+3,(opts.yfmt||fmtY)(v),{anchor:"end"}));
+  }
+  svg.appendChild(el("line",{x1:x0,y1:y0,x2:x0,y2:y1,stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(el("line",{x1:x0,y1:y1,x2:x1,y2:y1,stroke:C.axis,"stroke-width":1}));
+  var colors=opts.colors||["#2f7dff","#22c3aa","#f0b90b"];
+  var gw=(x1-x0)/categories.length;
+  categories.forEach(function(c,ci){
+    var n=series.length, bw=gw*0.7/n;
+    series.forEach(function(s,si){
+      var v=s.data[ci]; var bh=(v/max)*(y1-y0);
+      var xx=x0+ci*gw+gw*0.15+si*bw;
+      svg.appendChild(el("rect",{x:xx,y:y1-bh,width:bw-2,height:bh,rx:1,fill:colors[si%colors.length]}));
+    });
+    svg.appendChild(txt(x0+ci*gw+gw*0.5,y1+14,c,{size:"12.5"}));
+  });
+  legend(container,series,colors);
+  return svg;
+}
+
+/* bar + overlaid line on right axis (revenue vs active SKUs) */
+function overlayBarLine(container, labels, bars, line, opts){
+  opts=opts||{}; var W=920,H=300,L=64,R=52,T=14,B=36;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var maxB=Math.max.apply(null,bars), maxL=Math.max.apply(null,line)*1.15;
+  var x0=L,x1=W-R,y0=T,y1=H-B;
+  var gw=(x1-x0)/labels.length;
+  var steps=4; for(var g=0;g<=steps;g++){ var v=maxB*g/steps; var yy=y1-(v/maxB)*(y1-y0);
+    svg.appendChild(el("line",{x1:x0,y1:yy,x2:x1,y2:yy,stroke:C.line,"stroke-width":1}));
+    svg.appendChild(txt(x0-7,yy+3,(opts.yfmt||fmtY)(v),{anchor:"end"}));
+  }
+  for(var g=0;g<=steps;g++){ var v=maxL*g/steps; svg.appendChild(txt(x1+6,y1-(v/maxL)*(y1-y0)+3,Math.round(v),{anchor:"start",fill:C.muted,size:"12"})); }
+  svg.appendChild(el("line",{x1:x0,y1:y1,x2:x1,y2:y1,stroke:C.axis,"stroke-width":1}));
+  bars.forEach(function(v,i){
+    var bh=(v/maxB)*(y1-y0);
+    svg.appendChild(el("rect",{x:x0+i*gw+gw*0.18,y:y1-bh,width:gw*0.64,height:Math.max(1,bh),rx:1.5,fill:opts.barColor||"#2f7dff","fill-opacity":.85,onmousemove:"tip(event,'"+labels[i]+"<br>"+(opts.barName||"Revenue")+": "+esc((opts.tipfmt||opts.yfmt||fmtY)(v))+"')",onmouseout:"untip()"}));
+  });
+  var d=""; line.forEach(function(v,i){ d+=(i?"L":"M")+(x0+i*gw+gw/2).toFixed(1)+","+(y1-(v/maxL)*(y1-y0)).toFixed(1); });
+  svg.appendChild(el("path",{d:d,fill:"none",stroke:opts.lineColor||"#22c3aa","stroke-width":2}));
+  line.forEach(function(v,i){ svg.appendChild(el("circle",{cx:x0+i*gw+gw/2,cy:y1-(v/maxL)*(y1-y0),r:4,fill:opts.lineColor||"#22c3aa",stroke:C.bg,"stroke-width":1,onmousemove:"tip(event,'"+labels[i]+"<br>"+(opts.lineName||"Line")+": "+Math.round(v)+"')",onmouseout:"untip()"})); });
+  var step=Math.max(1,Math.ceil(labels.length/13));
+  labels.forEach(function(lb,i){ if(i%step===0||i===labels.length-1) svg.appendChild(txt(x0+i*gw+gw/2,H-12,lb,{size:"12"})); });
+  if(opts.ytitle){ var yt=txt(14,(y0+y1)/2,opts.ytitle,{anchor:"middle",fill:C.muted,size:"12.5"}); yt.setAttribute("transform","rotate(-90 14 "+(y0+y1)/2+")"); svg.appendChild(yt); }
+  legend(container,[{name:opts.barName||"Bars"},{name:opts.lineName||"Line"}],[opts.barColor||"#2f7dff",opts.lineColor||"#22c3aa"]);
+  return svg;
+}
+
+/* diverging breadth bars: up red above centre, down teal below */
+function breadthChart(container, labels, upPct, dnPct){
+  var W=920,H=260,L=44,R=14,T=16,B=34;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var x0=L,x1=W-R,yc=T+(H-T-B)/2, half=(H-T-B)/2;
+  svg.appendChild(el("line",{x1:x0,y1:yc,x2:x1,y2:yc,stroke:C.axis,"stroke-width":1}));
+  [0.25,0.5,0.75].forEach(function(f){
+    svg.appendChild(el("line",{x1:x0,y1:yc-half*f,x2:x1,y2:yc-half*f,stroke:C.line,"stroke-dasharray":"2,4"}));
+    svg.appendChild(el("line",{x1:x0,y1:yc+half*f,x2:x1,y2:yc+half*f,stroke:C.line,"stroke-dasharray":"2,4"}));
+    svg.appendChild(txt(x0-6,yc-half*f+3,(f*100)+"%",{anchor:"end",size:"11.5"}));
+    svg.appendChild(txt(x0-6,yc+half*f+3,-(f*100)+"%",{anchor:"end",size:"11.5"}));
+  });
+  var gw=(x1-x0)/labels.length;
+  labels.forEach(function(lb,i){
+    var u=upPct[i]||0, dn=dnPct[i]||0;
+    if(u>0) svg.appendChild(el("rect",{x:x0+i*gw+gw*0.2,y:yc-half*u,width:gw*0.6,height:Math.max(1,half*u),rx:1.5,fill:"#2fd181","fill-opacity":.85}));
+    if(dn>0) svg.appendChild(el("rect",{x:x0+i*gw+gw*0.2,y:yc,width:gw*0.6,height:Math.max(1,half*dn),rx:1.5,fill:"#ff5c7a","fill-opacity":.85}));
+  });
+  var step=Math.max(1,Math.ceil(labels.length/13));
+  labels.forEach(function(lb,i){ if(i%step===0) svg.appendChild(txt(x0+i*gw+gw/2,H-10,lb,{size:"12"})); });
+  legend(container,[{name:"SKUs raising price"},{name:"SKUs cutting price"}],["#2fd181","#ff5c7a"]);
+  return svg;
+}
+
+/* horizontal diverging bars around zero (elasticity β) */
+function divergingBars(container, rows, opts){
+  opts=opts||{}; var W=920,H=Math.max(240,rows.length*22+46),L=160,R=52,T=22,B=24;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var maxAbs=0; rows.forEach(function(r){ maxAbs=Math.max(maxAbs,Math.abs(r.value||0)); });
+  if(maxAbs<=0)maxAbs=1;
+  var x0=L,x1=W-R,xc=x0+(x1-x0)/2,hw=(x1-x0)/2;
+  svg.appendChild(el("line",{x1:xc,y1:T-8,x2:xc,y2:H-B,stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(txt(xc,T-12,"0",{size:"11.5"}));
+  var bh=(H-T-B)/rows.length;
+  rows.forEach(function(r,i){
+    if(r.value==null){ svg.appendChild(txt(x0-8,T+i*bh+bh/2-3,r.label,{anchor:"end",fill:C.muted,size:"13"})); svg.appendChild(txt(xc,T+i*bh+bh/2-3,"n/a",{anchor:"start",fill:C.dim,size:"12.5"})); return; }
+    var bw=(Math.abs(r.value)/maxAbs)*hw;
+    var xx=r.value>=0?xc:xc-bw;
+    var col=r.value<0?"#22c3aa":"#ff5c7a";
+    var tipText = opts.tip ? opts.tip(r) : (esc(r.label)+"<br>"+r.value.toFixed(2)+(opts.suffix||""));
+    svg.appendChild(el("rect",{x:xx,y:T+i*bh+4,width:Math.max(1.5,bw),height:bh-8,rx:2,fill:col,"fill-opacity":r.strong?0.95:0.6,onmousemove:"tip(event,'"+tipText+"')",onmouseout:"untip()"}));
+    svg.appendChild(txt(x0-8,T+i*bh+bh/2-3,r.label.length>26?r.label.slice(0,25)+"…":r.label,{anchor:"end",fill:C.muted,size:"13"}));
+    svg.appendChild(txt(r.value>=0?xx+bw+5:xx-5,T+i*bh+bh/2-3,r.value.toFixed(2)+(opts.suffix||""),{anchor:r.value>=0?"start":"end",fill:C.tx,size:"12.5"}));
+  });
+  return svg;
+}
+
+/* within-SKU demeaned log-log scatter */
+function scatterChart(container, groups){
+  var W=920,H=360,L=64,R=20,T=22,B=56;
+  var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+  container.innerHTML=""; container.appendChild(svg);
+  var xs=[],ys=[];
+  groups.forEach(function(g){ g.pts.forEach(function(p){ xs.push(p[0]); ys.push(p[1]); }); });
+  var xmin=Math.min.apply(null,xs),xmax=Math.max.apply(null,xs),ymin=Math.min.apply(null,ys),ymax=Math.max.apply(null,ys);
+  var px=(xmax-xmin)*0.08||1, py=(ymax-ymin)*0.08||1;
+  xmin-=px;xmax+=px;ymin-=py;ymax+=py;
+  var x0=L,x1=W-R,y0=T,y1=H-B;
+  function X(v){return x0+(v-xmin)/(xmax-xmin)*(x1-x0);}
+  function Y(v){return y1-(v-ymin)/(ymax-ymin)*(y1-y0);}
+  for(var g2=0;g2<=4;g2++){ var v=xmin+(xmax-xmin)*g2/4; svg.appendChild(el("line",{x1:X(v),y1:y0,x2:X(v),y2:y1,stroke:C.line,"stroke-width":.6})); svg.appendChild(txt(X(v),H-30,v.toFixed(2),{size:"11.5"})); }
+  for(var g3=0;g3<=4;g3++){ var v2=ymin+(ymax-ymin)*g3/4; svg.appendChild(el("line",{x1:x0,y1:Y(v2),x2:x1,y2:Y(v2),stroke:C.line,"stroke-width":.6})); svg.appendChild(txt(x0-7,Y(v2)+3,v2.toFixed(2),{anchor:"end",size:"11.5"})); }
+  svg.appendChild(el("line",{x1:X(0),y1:y0,x2:X(0),y2:y1,stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(el("line",{x1:x0,y1:Y(0),x2:x1,y2:Y(0),stroke:C.axis,"stroke-width":1}));
+  svg.appendChild(txt(x0+8,y0+12,"price up + volume up → cost pass-through",{anchor:"start",fill:C.dim,size:"11"}));
+  svg.appendChild(txt(x1-8,y0+12,"price up + volume down → normal",{anchor:"end",fill:C.dim,size:"11"}));
+  svg.appendChild(txt(x0+8,y1-10,"price down + volume down → unusual",{anchor:"start",fill:C.dim,size:"11"}));
+  svg.appendChild(txt(x1-8,y1-10,"price down + volume up → normal",{anchor:"end",fill:C.dim,size:"11"}));
+  function quad(x,y){
+    if(x>0.004&&y<0) return "price up + volume down → normal demand";
+    if(x< -0.004&&y>0) return "price down + volume up → normal demand";
+    if(x>0.004&&y>0) return "price up + volume up → cost pass-through";
+    if(x< -0.004&&y<0) return "price down + volume down → unusual, investigate";
+    return "near zero — little movement";
+  }
+  groups.forEach(function(g){
+    g.pts.forEach(function(p){
+      var tt="<b>"+esc(g.name)+"</b><br>Δln price "+p[0].toFixed(3)+"<br>Δln volume "+p[1].toFixed(3)+"<br>"+quad(p[0],p[1]);
+      svg.appendChild(el("circle",{cx:X(p[0]),cy:Y(p[1]),r:2.6,fill:g.color,"fill-opacity":g.op||0.6,onmousemove:"tip(event,'"+tt+"')",onmouseout:"untip()"}));
+    });
+  });
+  svg.appendChild(txt((x0+x1)/2,H-12,"Δ ln price (per-SKU demeaned)",{size:"12.5",fill:C.muted}));
+  var yt=txt(14,(y0+y1)/2,"Δ ln volume",{anchor:"middle",fill:C.muted,size:"12.5"}); yt.setAttribute("transform","rotate(-90 14 "+(y0+y1)/2+")"); svg.appendChild(yt);
+  legend(container,[{name:"β < 0 (normal)"},{name:"β > 0 (anomalous)"}],["#22c3aa","#ff5c7a"]);
+  return svg;
+}
+
+function skuSelector(selId, chartId, map, overallArr, labels, ytitle, opts){
+  opts=opts||{};
+  var keys=Object.keys(map);
+  keys.forEach(function(k){ ffill(map[k]); });
+  var sel=document.getElementById(selId);
+  ["Overall (total)","All SKUs (compare)"].concat(keys).forEach(function(o){ var op=document.createElement("option"); op.value=o; op.textContent=o; sel.appendChild(op); });
+  function draw(){
+    var c=document.getElementById(chartId);
+    var yf=opts.yfmt||fmtY;
+    if(sel.value==="Overall (total)"){
+      lineChart(c,[{name:opts.overallName||"Overall",data:overallArr}],labels,{ytitle:ytitle,yfmt:yf,colors:[opts.overallColor||"#2f7dff"]});
+    } else if(sel.value==="All SKUs (compare)"){
+      lineChart(c,keys.map(function(k){return {name:k,data:map[k],w:1.3};}),labels,{ytitle:ytitle,yfmt:yf,colors:ALLC});
+    } else {
+      lineChart(c,[{name:sel.value,data:map[sel.value]}],labels,{ytitle:ytitle,yfmt:yf,colors:[opts.skuColor||"#f0b90b"]});
+    }
+  }
+  sel.addEventListener("change",draw);
+  draw();
+}
+
+/* ============ tabs + deep-link ============ */
+var TABS=["ov","price","margin","sku","mom","chg","pg","el","comp","ms","dealer","area","growth","promo","voc","people","dda","w2p","mt"];
+function showTab(t){
+  if(TABS.indexOf(t)<0) t="ov";
+  TABS.forEach(function(id){
+    document.getElementById(id).classList.toggle("on", id===t);
+  });
+  [].forEach.call(document.querySelectorAll("#nav button"),function(b){
+    b.classList.toggle("on", b.getAttribute("data-t")===t);
+  });
+  if(location.hash.slice(1)!==t) history.replaceState(null,"","#"+t);
+  window.scrollTo(0,0);
+}
+[].forEach.call(document.querySelectorAll("#nav button"),function(b){
+  b.addEventListener("click",function(){ showTab(b.getAttribute("data-t")); });
+});
+window.addEventListener("hashchange",function(){ showTab(location.hash.slice(1)); });
+/* ============ OVERVIEW ============ */
+(function(){
+  var y25=D.yearlyRev[2025], y24=D.yearlyRev[2024];
+  // active SKUs per month (full 47-mo series)
+  var allSkuKeys=Object.keys(D.skuMonthly);
+  var port=D.skuMonthly["B500 DWR 10 mm"].map(function(_,i){
+    var s=0; allSkuKeys.forEach(function(k){ if(D.skuMonthly[k][i]>0) s++; }); return s;
+  });
+  var labels47=D.monthly.slice(1).map(function(m){return mn(m[1])+"'"+String(m[0]).slice(2);});
+  var rev47=D.monthly.slice(1).map(function(m){return m[2];});
+  // last full month = Oct'26 (Nov'26 partial)
+  var lastFullIdx=port.length-2;
+  // breadth over window
+  var upPct=[],dnPct=[];
+  for(var i=1;i<WINLAB.length;i++){
+    var up=0,dn=0,n=0;
+    SKUKEYS.forEach(function(k){ var a=D.priceNet[k][i-1],b=D.priceNet[k][i]; if(a==null||b==null) return; n++; if(b>a)up++; else if(b<a)dn++; });
+    upPct.push(n?up/n:0); dnPct.push(n?dn/n:0);
+  }
+  upPct.unshift(null); dnPct.unshift(null);
+  var betas=SKUKEYS.map(function(k){return EL[k];}).filter(Boolean).map(function(e){return e.b;}).sort(function(a,b){return a-b;});
+  var medB=betas.length?betas[Math.floor(betas.length/2)]:null;
+  var lastUp=upPct[upPct.length-1], lastDn=dnPct[dnPct.length-1];
+  var k=[
+    {l:"FY2025-26 Net Sales",v:cr(y25),n:pf(pct(y25,y24))+" vs FY2024-25",c:pct(y25,y24)>=0?"up":"down"},
+    {l:"Active SKUs (Oct'26)",v:port[lastFullIdx],n:"of "+allSkuKeys.length+" tracked · Nov'26 partial"},
+    {l:"Tracked rebar SKUs",v:SKUKEYS.length+" with price",n:"clean window Jan'25–Nov'26"},
+    {l:"Median elasticity β",v:medB==null?"—":medB.toFixed(2),n:betas.length+" of "+SKUKEYS.length+" SKUs measurable"},
+    {l:"Price direction (Oct'26)",v:(lastUp*100).toFixed(0)+"% up",n:(lastDn*100).toFixed(0)+"% of SKUs cut price"}
+  ];
+  document.getElementById("ovKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note '+(x.c||'')+'">'+x.n+'</div></div>';}).join("");
+
+  // Deficit / (Surplus) card — Q1 FY 26-27 + Q2 (October) FY 26-27 revenue vs budget (DB budget module)
+  (function(){
+    // Budget = bgt.tblBudgetIncomeExpenseRow (GL 3010001+3010003); Revenue = fin.tblAccountingJournal net GL (3010001, net of returns)
+    var rev=77.86+95.54+108.37+105.32, bud=128.40+124.01+130.25+125.48; // Q1 (Jul-Sep) + October combined
+    var def=bud-rev;
+    var isDeficit=def>0.5;
+    var loss=11.2; // bottom-line EAT loss
+    var sharePeak=Math.max.apply(null,D.msAkijShare), shareLatest=D.msAkijShare[D.msAkijShare.length-1];
+    var shareLost=shareLatest-sharePeak;
+    var h='<div class="ind '+(isDeficit?'loss':'win')+'">'+(isDeficit?'Deficit':'Surplus')+'</div>';
+    h+='<div class="m"><div class="l" style="text-transform:none;letter-spacing:0;font-size:12px">Q1 FY 26-27 and Q2 (October) FY 26-27 revenue vs Q1 FY 26-27 and Q2 (October) FY 26-27 Budget</div><div class="v">৳'+rev.toFixed(2)+' Cr <span style="font-size:12px;color:var(--muted)">vs ৳'+bud.toFixed(2)+' Cr budget</span> <span class="'+(def>0?'neg':'pos')+'" style="font-size:12.5px;font-weight:600">('+(def>0?'−':'+')+'৳'+Math.abs(def).toFixed(2)+' Cr '+(def>0?'deficit':'surplus')+')</span></div></div>';
+    h+='<div class="m"><div class="l">Bottom-line loss (EAT)</div><div class="v neg">−৳'+loss.toFixed(2)+' Cr</div></div>';
+    h+='<div class="m"><div class="l">Competitive positioning — share lost</div><div class="v neg">−'+Math.abs(shareLost).toFixed(2)+' pp <span style="font-size:12px;color:var(--muted)">('+sharePeak.toFixed(2)+'% → '+shareLatest.toFixed(2)+'%)</span></div></div>';
+    document.getElementById("lossWinCard").innerHTML=h;
+  })();
+
+  overlayBarLine(document.getElementById("cPort"),labels47,rev47,port,{yfmt:fmtY,ytitle:"Revenue (Tk)",barName:"Net revenue (৳)",lineName:"Active SKUs"});
+  breadthChart(document.getElementById("cBreadth"),WINLAB.slice(1),upPct.slice(1),dnPct.slice(1));
+
+  // insights
+  var grow=D.sku.slice().sort(function(a,b){return pct(b[4],b[3])-pct(a[4],a[3]);})[0];
+  var p10w=D.priceNet["B500 DWR 10 mm"];
+  var floor=Math.min.apply(null,p10w.filter(function(v){return v!=null;})), floorI=p10w.indexOf(floor);
+  var last=D.priceNet["B500 DWR 10 mm"][22];
+  var akijMs=D.ms.find(function(m){return m[0]==="AKIJ ISPAT";});
+  var elNeg=betas.filter(function(b){return b<-1;}).length, elIn=betas.filter(function(b){return b>=-1&&b<=0;}).length, elPos=betas.filter(function(b){return b>0;}).length;
+  var commTotal=0; D.commType.forEach(function(c){commTotal+=c[1];});
+  var ins=[
+    ["Revenue grew from "+cr(D.yearlyRev[2023])+" (FY2023-24) to "+cr(y25)+" (FY2025-26), +"+pct(y25,y24).toFixed(1)+"% YoY.","The mix shift to larger-diameter B500 (25/32 mm) is the main driver — a premium-grade mix, not just volume."],
+    ["B500 DWR 10 mm bottomed at "+taka(floor)+"/MT in "+WINLAB[floorI]+" and recovered to "+taka(last)+"/MT by Nov'26 (+"+((last-floor)/floor*100).toFixed(1)+"%).","Pricing power returned with the Mar'26 scrap-cost surge; hold this band or volume leaks to BSRM/AKS offers."],
+    [grow[0]+" is the fastest-growing SKU ("+pf(pct(grow[4],grow[3]))+" FY24-25 → FY25-26).","Confirm whether this is real demand or a one-off project order before expanding stock."],
+    ["Akij Ispat steel market share moved 2.06% → 2.59%, the fastest of the named mills (+21.7%).","Share gains came while total market volume shrank — competitors' retreat matters as much as Akij's push."],
+    [elNeg+" SKUs price-elastic (β<−1), "+elIn+" inelastic (−1..0), "+elPos+" anomalous (β>0).","Inelastic grades (mostly B500 core sizes) carry headroom for price; elastic/anomalous ones need a margin check before any hike."],
+    ["Dealer commission totals "+cr(commTotal)+" over 3 years (~"+(commTotal/D.yearlyRev[2025]*100).toFixed(1)+"% of one FY).","'Monthly' incentive is 66% of the pool — renegotiating its target basis is the fastest NP% lever."]
+  ];
+  document.getElementById("insights").innerHTML=ins.map(function(p){
+    return '<div class="insight"><b>'+p[0]+'</b><br><span class="small">'+p[1]+'</span></div>';}).join("");
+
+  // journey table (top 8 by FY25-26 revenue)
+  var byName={}; D.sku.forEach(function(s){ byName[s[0].replace("Akij Ispat ","")]=s; });
+  var jrows=SKUKEYS.slice().sort(function(a,b){ return (byName[b]?byName[b][4]:0)-(byName[a]?byName[a][4]:0); }).slice(0,8);
+  var th='<table><thead><tr><th>SKU</th><th>Price Jan\'25</th><th>Price Nov\'26</th><th>Move</th><th>Vol Jan\'25 (MT)</th><th>Vol Oct\'26 (MT)</th><th>β</th></tr></thead><tbody>';
+  jrows.forEach(function(k){
+    var p=D.priceNet[k], v=winVol[k];
+    var first=p[0], lastP=null, lastI=-1;
+    for(var i=p.length-1;i>=0;i--){ if(p[i]!=null){ lastP=p[i]; lastI=i; break; } }
+    var mv=(first!=null&&lastP!=null)?(lastP-first)/first*100:null;
+    var vFirst=v[0], vLast=null;
+    for(var i=v.length-2;i>=0;i--){ if(v[i]!=null){ vLast=v[i]; break; } } // last FULL month (Oct'26)
+    th+='<tr class="drill" onclick="openMom(\''+esc(k)+'\')"><td><b>'+esc(k)+'</b></td><td>'+taka(first)+'</td><td>'+taka(lastP)+'</td>';
+    th+='<td class="'+(mv==null?"":mv>=0?"pos":"neg")+'">'+(mv==null?"—":pf(mv))+'</td>';
+    th+='<td>'+mt(vFirst)+'</td><td>'+mt(vLast)+'</td>';
+    th+='<td>'+(EL[k]?EL[k].b.toFixed(2):'<span class="tag t-mut">n/a</span>')+'</td></tr>';
+  });
+  th+='</tbody></table>';
+  document.getElementById("cJourney").innerHTML=th;
+})();
+
+/* ============ PRICE ============ */
+(function(){
+  var html='<table><thead><tr><th>Product</th><th>Grade</th><th>Net price (Tk/MT)</th><th>Avg cost (Tk/MT)</th><th>GP%</th></tr></thead><tbody>';
+  D.price25.forEach(function(p){
+    var gp=(p[2]-p[3])/p[2]*100;
+    html+='<tr><td><b>'+p[0]+'</b></td><td><span class="pill p-'+(p[1]==="B500"?"b500":"b420")+'">'+p[1]+'</span></td>';
+    html+='<td><b>'+taka(p[2])+'</b></td><td>'+taka(p[3])+'</td><td class="'+(gp>=0?"pos":"neg")+'">'+gp.toFixed(1)+'%</td></tr>';
+  });
+  html+='</tbody></table>';
+  document.getElementById("priceTable").innerHTML=html;
+  skuSelector("netPriceSel","netPriceChart",D.priceNet,D.priceOverallNet,D.priceMonths,"Tk / MT",{yfmt:fmtMT,overallName:"Overall net price"});
+  skuSelector("grossPriceSel","grossPriceChart",D.priceGross,D.priceOverallGross,D.priceMonths,"Tk / MT",{yfmt:fmtMT,overallName:"Overall gross price"});
+  skuSelector("mrpPriceSel","mrpPriceChart",D.priceMRP,D.priceOverallMRP,D.priceMonths,"Tk / MT",{yfmt:fmtMT,overallName:"Overall MRP"});
+  lineChart(document.getElementById("cThreePrice"),[
+    {name:"Net (realised)",data:D.priceOverallNet,w:2.6},
+    {name:"MRP (announced)",data:D.priceOverallMRP,w:1.8},
+    {name:"Gross (list)",data:D.priceOverallGross,w:2,dash:"7,5"}
+  ],D.priceMonths,{yfmt:fmtMT,ytitle:"Tk / MT",tipfmt:function(v){return taka(v);},colors:["#2f7dff","#22c3aa","#f0b90b"]});
+})();
+
+/* ============ GP / NP / NET ============ */
+(function(){
+  var net=83000,cost=76000,commPerTon=1100,freight=750;
+  var items=[
+    {label:"Gross price (list)",value:net,color:"#3b4f8a"},
+    {label:"Net price (realised, ≈0% disc.)",value:net,color:"#2f7dff"},
+    {label:"Avg production cost",value:cost,color:"#ff5c7a"},
+    {label:"Dealer commission/MT (~1.3%)",value:commPerTon,color:"#ff8a3d"},
+    {label:"Freight & other/MT (~0.9%)",value:freight,color:"#8fa0c4"}
+  ];
+  barChart(document.getElementById("waterfall"),items,{fmt:function(v){return taka(v)+"/MT";}});
+  var scrapCost=[56478,58704,59410,58949,58903,56547,54295,50969,51471,51527,53107,51742];
+  lineChart(document.getElementById("gpnpTrend"),[
+    {name:"Net price (B500 10 mm)",data:D.p10.slice(0,12),w:2.4},
+    {name:"Scrap cost (raw material)",data:scrapCost,w:1.6}
+  ],D.priceMonths.slice(0,12),{yfmt:fmtMT,ytitle:"Tk / MT",colors:["#f0b90b","#ff5c7a"]});
+  var html='<table><thead><tr><th>Product</th><th>Net price (FY25-26)</th><th>Avg cost</th><th>GP/MT</th><th>GP%</th><th>Est. NP%</th></tr></thead><tbody>';
+  D.price25.forEach(function(p){
+    var gp=p[2]-p[3],gpPct=gp/p[2]*100,npPct=gpPct-2.1;
+    html+='<tr><td><b>'+p[0]+'</b></td><td>'+taka(p[2])+'</td><td>'+taka(p[3])+'</td><td class="'+(gp>=0?"pos":"neg")+'">'+taka(gp)+'</td><td class="pos">'+gpPct.toFixed(1)+'%</td><td>~'+npPct.toFixed(1)+'%</td></tr>';
+  });
+  html+='</tbody></table><div class="small" style="margin-top:8px">GP% = (net price − avg cost)/net price. Est. NP% = GP% − ~2.1% (dealer commission ~1.3% + freight ~0.8%). Directional — final NP needs finance P&amp;L.</div>';
+  document.getElementById("marginTable").innerHTML=html;
+})();
+/* ============ ALL SKUs (sortable / filterable / drill) ============ */
+var byNameG={}; D.sku.forEach(function(s){ byNameG[s[0].replace("Akij Ispat ","")]=s; });
+var SKUROWS=SKUKEYS.map(function(k){
+  var p=D.priceNet[k], v=winVol[k], m=winMRP[k];
+  var first=null,last=null,lastI=-1,absMov=0,cnt=0;
+  for(var i=0;i<p.length;i++){ if(p[i]==null) continue; if(first==null)first=p[i]; last=p[i]; lastI=i;
+    if(i>0&&p[i-1]!=null){ absMov+=Math.abs(p[i]-p[i-1])/p[i-1]*100; cnt++; } }
+  var fLast=null; for(var i=v.length-2;i>=0;i--){ if(v[i]!=null){ fLast=v[i]; break; } }
+  var winMove=(first!=null&&last!=null)?(last-first)/first*100:null;
+  var last3=lastI>=3&&p[lastI-3]!=null&&p[lastI]!=null?(p[lastI]-p[lastI-3])/p[lastI-3]*100:null;
+  var e=EL[k];
+  var rmrp=(last!=null&&m[lastI]!=null)?last/m[lastI]:null;
+  var fy25=byNameG[k]?byNameG[k][4]:null;
+  var grade=k.indexOf("B500")===0?"B500":"B420";
+  return {key:k, grade:grade, rev:fy25, price:last, first:first, move:winMove, avgMoM:cnt?absMov/cnt:null, last3:last3,
+          b:e?e.b:null, r2:e?e.r2:null, n:e?e.n:null, vol:fLast, rmrp:rmrp};
+});
+var ST={sort:"rev",dir:-1,q:"",grade:"all",el:"all",move:"all"};
+function elTag(r){
+  if(r.b==null) return '<span class="tag t-mut">n/a</span>';
+  if(r.b<-1) return '<span class="tag t-warn">elastic</span>';
+  if(r.b<=0) return '<span class="tag t-neg">inelastic</span>';
+  return '<span class="tag t-pos">anomal.</span>';
+}
+function renderSku(){
+  var rows=SKUROWS.filter(function(r){
+    if(ST.grade!=="all"&&r.grade!==ST.grade) return false;
+    if(ST.el==="neg"&&(r.b==null||r.b>=0)) return false;
+    if(ST.el==="pos"&&(r.b==null||r.b<=0)) return false;
+    if(ST.el==="na"&&r.b!=null) return false;
+    if(ST.move==="r3"&&!(r.last3!=null&&r.last3>0)) return false;
+    if(ST.move==="big"&&!(r.move!=null&&Math.abs(r.move)>10)) return false;
+    if(ST.q&&r.key.toLowerCase().indexOf(ST.q.toLowerCase())<0) return false;
+    return true;
+  });
+  rows.sort(function(a,b){
+    var x=a[ST.sort], y=b[ST.sort];
+    if(x==null) x=-9e9; if(y==null) y=-9e9;
+    if(typeof x==="string") return x.localeCompare(y)*ST.dir;
+    return (x-y)*ST.dir;
+  });
+  document.getElementById("skuCount").textContent="· "+rows.length+" of "+SKUROWS.length+" SKUs";
+  function th(key,label){ return '<th data-s="'+key+'"'+(ST.sort===key?' class="sorted'+(ST.dir<0?"":" asc")+'"':'')+'>'+label+(ST.sort===key?(ST.dir<0?" ↓":" ↑"):"")+'</th>'; }
+  var h='<table><thead><tr>'+th("key","SKU")+th("grade","Grade")+th("rev","FY25-26 rev")+th("price","Price Nov\'26")+th("move","Window move")+th("avgMoM","Avg MoM swing")+th("vol","Vol Oct\'26 (MT)")+th("b","β")+th("r2","R²")+th("rmrp","Realised ÷ MRP")+'</tr></thead><tbody>';
+  rows.forEach(function(r){
+    var rmrpBad = r.rmrp!=null && (r.rmrp<0.35||r.rmrp>1.6);
+    h+='<tr class="drill" onclick="openMom(\''+esc(r.key)+'\')">';
+    h+='<td><b>'+esc(r.key)+'</b></td><td><span class="pill p-'+(r.grade==="B500"?"b500":"b420")+'">'+r.grade+'</span></td>';
+    h+='<td>'+cr(r.rev)+'</td><td>'+taka(r.price)+'</td>';
+    h+='<td class="'+(r.move==null?"":r.move>=0?"pos":"neg")+'">'+(r.move==null?"—":pf(r.move))+'</td>';
+    h+='<td>'+(r.avgMoM==null?"—":r.avgMoM.toFixed(2)+"%")+'</td><td>'+mt(r.vol)+'</td>';
+    h+='<td>'+(r.b==null?"—":r.b.toFixed(2))+' '+elTag(r)+'</td>';
+    h+='<td>'+(r.r2==null?"—":r.r2.toFixed(2))+'</td>';
+    h+='<td>'+(r.rmrp==null||rmrpBad?'<span class="tag t-mut" title="outside 0.35–1.6 sanity band">—</span>':(r.rmrp*100).toFixed(0)+"%")+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  document.getElementById("tSku").innerHTML=h;
+  [].forEach.call(document.querySelectorAll("#tSku th[data-s]"),function(t){
+    t.addEventListener("click",function(){
+      var s=t.getAttribute("data-s");
+      if(ST.sort===s) ST.dir*=-1; else { ST.sort=s; ST.dir=-1; }
+      renderSku();
+    });
+  });
+}
+document.getElementById("q").addEventListener("input",function(){ ST.q=this.value; renderSku(); });
+document.getElementById("fGrade").addEventListener("change",function(){ ST.grade=this.value; renderSku(); });
+document.getElementById("fEl").addEventListener("change",function(){ ST.el=this.value; renderSku(); });
+document.getElementById("fMove").addEventListener("change",function(){ ST.move=this.value; renderSku(); });
+renderSku();
+
+(function(){
+  var rod25=D.cat["MS Rod"][2025], rod24=D.cat["MS Rod"][2024];
+  var top=D.sku.slice().sort(function(a,b){return b[4]-a[4];});
+  var grow=D.sku.slice().sort(function(a,b){return pct(b[4],b[3])-pct(a[4],a[3]);})[0];
+  var decl=D.sku.slice().sort(function(a,b){return pct(a[4],a[3])-pct(b[4],b[3]);})[0];
+  var k=[
+    {l:"FY2025-26 MS Rod",v:cr(rod25),n:pf(pct(rod25,rod24))+" YoY",c:"up"},
+    {l:"Top SKU",v:"B500 10 mm",n:cr(top[0][4])+" · "+(top[0][4]/rod25*100).toFixed(0)+"% of MS Rod"},
+    {l:"Fastest grower",v:grow[0].replace("Akij Ispat ",""),n:pf(pct(grow[4],grow[3])),c:"up"},
+    {l:"Slowest SKU",v:decl[0].replace("Akij Ispat ",""),n:pf(pct(decl[4],decl[3])),c:"down"},
+    {l:"Wastage/by-product",v:cr(D.cat["Wastage & By-Products"][2025]),n:pf(pct(D.cat["Wastage & By-Products"][2025],D.cat["Wastage & By-Products"][2024])),c:"up"}
+  ];
+  document.getElementById("skuKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note '+(x.c||"")+'">'+x.n+'</div></div>';}).join("");
+  var months=D.monthly.slice(1);
+  var labels=months.map(function(m){return mn(m[1])+"'"+String(m[0]).slice(2);});
+  skuSelector("skuSel","skuRevMonthly",D.skuMonthly,months.map(function(m){return m[2];}),labels,"Net revenue (Tk)",{yfmt:fmtY,overallName:"Overall net revenue"});
+  barChart(document.getElementById("skuRank"),top.map(function(s){return {label:s[0].replace("Akij Ispat ",""),value:s[4],color:s[1]==="B500"?"#f0b90b":"#2f7dff"};}),{fmt:cr});
+})();
+
+/* ============ SKU MONTH-ON-MONTH ============ */
+(function(){
+  var sel=document.getElementById("momPick");
+  ["Overall (total)"].concat(SKUKEYS).forEach(function(o){ var op=document.createElement("option"); op.value=o; op.textContent=o; sel.appendChild(op); });
+  window.openMom=function(code){
+    sel.value=code; showTab("mom"); renderMom();
+  };
+  function renderMom(){
+    var isAll=sel.value==="Overall (total)";
+    var key=isAll?null:sel.value;
+    document.getElementById("momTitle").textContent=(isAll?"Overall (total)":key)+" — month-on-month";
+    var rng=document.getElementById("momRange").value;
+    var p=key?D.priceNet[key]:D.priceOverallNet, v=key?winVol[key]:winVolTotal, r=key?winRev[key]:winRevTotal, m=key?winMRP[key]:D.priceOverallMRP;
+    var n=rng==="all"?p.length:Math.min(+rng,p.length);
+    var s=p.length-n;
+    var labs=WINLAB.slice(s), pp=p.slice(s), vv=v.slice(s), rr=r.slice(s), mm=m.slice(s);
+    dualLineChart(document.getElementById("momChart"),
+      {name:"Volume (MT)",data:vv.map(function(x){return x==null?0:x;}),w:2},
+      {name:"Net price (Tk/MT)",data:pp.map(function(x){return x==null?0:x;})},
+      labs,{yfmt:function(x){return (x/1e3).toFixed(0)+"k MT";},y2fmt:fmtMT,ytitle:"Volume",y2title:"Tk/MT",c1:"#2f7dff",c2:"#f0b90b"});
+    var h='<table><thead><tr><th>Month</th><th>Revenue</th><th>Net price</th><th>Δ price</th><th>Vol (MT, derived)</th><th>Δ vol</th><th>MRP</th><th>Realised÷MRP</th></tr></thead><tbody>';
+    var prev=null;
+    for(var i=0;i<labs.length;i++){
+      var dp=null,dv=null;
+      if(prev!=null&&pp[i]!=null&&prev.p!=null&&prev.p>0) dp=(pp[i]-prev.p)/prev.p*100;
+      if(prev!=null&&vv[i]!=null&&prev.v!=null&&prev.v>0) dv=(vv[i]-prev.v)/prev.v*100;
+      var rmrp=(pp[i]!=null&&mm[i]!=null)?pp[i]/mm[i]:null;
+      var rmrpTxt=(rmrp==null||rmrp<0.35||rmrp>1.6)?'—':(rmrp*100).toFixed(0)+"%";
+      h+='<tr><td>'+labs[i]+'</td><td>'+cr(rr[i])+'</td><td>'+taka(pp[i])+'</td>';
+      h+='<td class="'+(dp==null?"":dp>=0?"pos":"neg")+'">'+(dp==null?"—":pf(dp))+'</td>';
+      h+='<td>'+mt(vv[i])+'</td>';
+      h+='<td class="'+(dv==null?"":dv>=0?"pos":"neg")+'">'+(dv==null?"—":pf(dv))+'</td>';
+      h+='<td>'+taka(mm[i])+'</td><td>'+rmrpTxt+'</td></tr>';
+      if(pp[i]!=null||rr[i]>0) prev={p:pp[i],v:vv[i]};
+    }
+    h+='</tbody></table>';
+    document.getElementById("tMom").innerHTML=h;
+  }
+  sel.addEventListener("change",renderMom);
+  document.getElementById("momRange").addEventListener("change",renderMom);
+  // initial: biggest FY25-26 SKU
+  sel.value="B500 DWR 10 mm";
+  renderMom();
+})();
+
+/* ============ PRICE CHANGE TRACKER ============ */
+(function(){
+  function jumpRows(list){
+    var h='<table><thead><tr><th>SKU</th><th>Month</th><th>From</th><th>To</th><th>Δ price</th><th>Δ volume (same mo)</th></tr></thead><tbody>';
+    list.slice(0,200).forEach(function(j){
+      h+='<tr class="drill" onclick="openMom(\''+esc(j.sku)+'\')"><td><b>'+esc(j.sku)+'</b></td><td>'+WINLAB[j.idx]+'</td>';
+      h+='<td>'+taka(j.from)+'</td><td>'+taka(j.to)+'</td>';
+      h+='<td class="'+(j.ch>=0?"pos":"neg")+'"><b>'+pf(j.ch)+'</b></td>';
+      h+='<td class="'+(j.vol==null?"":j.vol>=0?"pos":"neg")+'">'+(j.vol==null?"—":pf(j.vol))+'</td></tr>';
+    });
+    return h+'</tbody></table>';
+  }
+  function renderJ(){
+    var q=document.getElementById("chq").value.toLowerCase();
+    var list=JUMPS.filter(function(j){ return !q||j.sku.toLowerCase().indexOf(q)>=0||WINLAB[j.idx].toLowerCase().indexOf(q)>=0; });
+    document.getElementById("chc").textContent="· "+list.length+" moves (≥2%, showing top 200)";
+    document.getElementById("tJump").innerHTML=jumpRows(list);
+  }
+  document.getElementById("chq").addEventListener("input",renderJ);
+  renderJ();
+  var h='<table><thead><tr><th>SKU</th><th>Month</th><th>MRP from</th><th>MRP to</th><th>Δ MRP</th></tr></thead><tbody>';
+  DECL.slice(0,250).forEach(function(d){
+    h+='<tr><td><b>'+esc(d.sku)+'</b></td><td>'+WINLAB[d.idx]+'</td><td>'+taka(d.from)+'</td><td>'+taka(d.to)+'</td>';
+    h+='<td class="'+(d.ch>=0?"pos":"neg")+'">'+pf(d.ch)+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  document.getElementById("tDecl").innerHTML=h;
+  // Trade (mill-rate) changes
+  function tradeRows(list){
+    var th='<table><thead><tr><th>Date</th><th>Trade rate</th><th>Δ rate</th></tr></thead><tbody>';
+    list.forEach(function(c){ th+='<tr><td>'+c[0]+'</td><td>'+taka(c[1])+'</td><td class="'+(c[2]>=0?"pos":"neg")+'">'+pf(c[2])+'</td></tr>'; });
+    return th+'</tbody></table>';
+  }
+  var tList=D.tradeChanges.slice().reverse();
+  document.getElementById("tTradeDecl").innerHTML=tradeRows(tList);
+  document.getElementById("tq").addEventListener("input",function(){
+    var q=this.value.toLowerCase();
+    document.getElementById("tTradeDecl").innerHTML=tradeRows(tList.filter(function(c){return c[0].indexOf(q)>=0;}));
+  });
+})();
+
+/* ============ DECLARED PRICE GRID ============ */
+(function(){
+  var trade=D.tradeMonthly, curTrade=trade[trade.length-1];
+  function last(arr){ for(var i=arr.length-1;i>=0;i--){ if(arr[i]!=null) return arr[i]; } return null; }
+  var mrpVals=SKUKEYS.map(function(k){return last(D.priceMRP[k]);}).filter(function(v){return v!=null;});
+  var netVals=SKUKEYS.map(function(k){return last(D.priceNet[k]);}).filter(function(v){return v!=null;});
+  var avgMrp=mrpVals.reduce(function(a,b){return a+b;},0)/mrpVals.length;
+  var avgNet=netVals.reduce(function(a,b){return a+b;},0)/netVals.length;
+  var lastRev=D.tradeChanges[D.tradeChanges.length-1][0];
+  var k=[
+    {l:"Current Trade rate",v:taka(curTrade),n:"mill rate, last set "+lastRev},
+    {l:"SKUs declared",v:SKUKEYS.length,n:"rebar grades in price setup"},
+    {l:"Avg MRP",v:taka(Math.round(avgMrp)),n:"announced list price"},
+    {l:"Realised vs Trade",v:pf((avgNet/curTrade-1)*100),n:"avg realised net gap"}
+  ];
+  document.getElementById("pgKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note">'+x.n+'</div></div>';}).join("");
+  function tkf(v){ return (v/1000).toFixed(0)+"k"; }
+  lineChart(document.getElementById("cTradeTrend"),[
+    {name:"Trade (mill) rate",data:trade,w:2.2},
+    {name:"Realised net price",data:D.priceOverallNet,w:2.2}
+  ],WINLAB,{ytitle:"Tk / MT",yfmt:tkf,tipfmt:function(v){return taka(v);},colors:["#f0b90b","#2f7dff"]});
+  // realised vs Trade gap per SKU (diverging)
+  var gapRows=SKUKEYS.map(function(k){
+    var n=last(D.priceNet[k]); var val=n!=null?(n/curTrade-1)*100:null;
+    return {label:k, value:val};
+  }).sort(function(a,b){return (b.value==null?-99:b.value)-(a.value==null?-99:a.value);});
+  divergingBars(document.getElementById("cGap"),gapRows,{suffix:"%"});
+  // grid table
+  var h='<table><thead><tr><th>SKU</th><th>Trade rate</th><th>MRP</th><th>Realised</th><th>Realised vs Trade</th><th>MRP vs Trade</th></tr></thead><tbody>';
+  SKUKEYS.forEach(function(k){
+    var n=last(D.priceNet[k]), m=last(D.priceMRP[k]);
+    h+='<tr><td><b>'+esc(k)+'</b></td><td>'+taka(curTrade)+'</td><td>'+(m!=null?taka(m):"—")+'</td><td>'+(n!=null?taka(n):"—")+'</td>';
+    h+='<td class="'+(n!=null&&n>=curTrade?"pos":"neg")+'">'+(n!=null?pf((n/curTrade-1)*100):"—")+'</td>';
+    h+='<td class="'+(m!=null&&m>=curTrade?"pos":"neg")+'">'+(m!=null?pf((m/curTrade-1)*100):"—")+'</td></tr>';
+  });
+  h+='</tbody></table>';
+  document.getElementById("tGrid").innerHTML=h;
+})();
+
+/* ============ ELASTICITY ============ */
+(function(){
+  function elasticityRead(b, r2, n){
+    if(b==null) return "Not measurable — needs at least 8 valid month-over-month pairs with real price variation.";
+    var fit = (r2==null) ? "" : (r2<0.10 ? "Weak fit (R² "+r2.toFixed(2)+") — treat as a direction only." : (r2<0.30 ? "Moderate fit (R² "+r2.toFixed(2)+")." : "Strong fit (R² "+r2.toFixed(2)+")."));
+    var head, body;
+    if(b>0){
+      head = "β = +"+b.toFixed(2)+" — anomalous (positive)";
+      body = "Price and volume move in the SAME direction: a 10% price rise is linked to a ~"+(b*10).toFixed(0)+"% volume RISE. Usually scrap-cost pass-through (raw-material cost drives both) or lumpy project orders — not a demand response.";
+    } else if(b<-1){
+      head = "β = "+b.toFixed(2)+" — elastic";
+      body = "Volume reacts more than price: a 10% price rise is linked to a ~"+Math.abs(b*10).toFixed(0)+"% volume DROP, so revenue FALLS. Hike with caution.";
+    } else {
+      head = "β = "+b.toFixed(2)+" — inelastic";
+      body = "Volume is sticky to price: a 10% price rise only trims volume ~"+Math.abs(b*10).toFixed(0)+"%, so revenue RISES. There is price headroom.";
+    }
+    return head+"<br>"+body+(fit?"<br>"+fit:"")+(n?"<br>Based on "+n+" month-pairs.":"");
+  }
+  function r2Read(r2){
+    return "R² = "+r2.toFixed(2)+" — how much of the month-to-month volume variation the price move explains."+(r2<0.10?" Weak fit: treat β as a direction only.":(r2<0.30?" Moderate fit.":" Strong fit."));
+  }
+  var meas=0, neg=0, inel=0, anom=0;
+  SKUKEYS.forEach(function(k){ var e=EL[k]; if(!e) return; meas++; if(e.b<-1)neg++; else if(e.b<=0)inel++; else anom++; });
+  var k=[
+    {l:"SKUs measurable",v:meas+" / "+SKUKEYS.length,n:"≥8 month-pairs, |β|≤8"},
+    {l:"Elastic (β < −1)",v:neg,n:"price up → volume falls more"},
+    {l:"Inelastic (−1 … 0)",v:inel,n:"headroom to hold or raise price"},
+    {l:"Anomalous (β > 0)",v:anom,n:"check data & project orders"}
+  ];
+  document.getElementById("elKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note">'+x.n+'</div></div>';}).join("");
+  var rows=SKUKEYS.map(function(key){ return {label:key, value:EL[key]?EL[key].b:null, strong:EL[key]?EL[key].r2>0.2:false}; })
+    .sort(function(a,b){ return (b.value==null?-99:b.value)-(a.value==null?-99:a.value); });
+  divergingBars(document.getElementById("cEl"),rows,{tip:function(r){
+    var e=EL[r.label];
+    return "<b>"+esc(r.label)+"</b><br>"+elasticityRead(e?e.b:null, e?e.r2:null, e?e.n:0);
+  }});
+  // scatter: per-SKU demeaned Δln pairs (one group per SKU, so hover can name it)
+  var groups=[];
+  SKUKEYS.forEach(function(key){
+    var e=EL[key]; if(!e) return;
+    var pArr=D.priceNet[key], vArr=winVol[key], raw=[];
+    for(var i=1;i<pArr.length;i++){
+      var p1=pArr[i-1],p2=pArr[i],v1=vArr[i-1],v2=vArr[i];
+      if(p1==null||p2==null||v1==null||v2==null||p1<=0||p2<=0||v1<=0||v2<=0) continue;
+      raw.push([Math.log(p2/p1),Math.log(v2/v1)]);
+    }
+    if(raw.length<8) return;
+    var mx=0,my=0; raw.forEach(function(r){mx+=r[0];my+=r[1];}); mx/=raw.length; my/=raw.length;
+    var pts=raw.map(function(r){ return [r[0]-mx, r[1]-my]; });
+    groups.push({name:key, pts:pts, color:e.b<0?"#22c3aa":"#ff5c7a", op:e.r2>0.2?0.8:0.45});
+  });
+  scatterChart(document.getElementById("cScatter"),groups);
+  var h='<table><thead><tr><th>SKU</th><th>β (first-diff)</th><th>R²</th><th>Pairs</th><th>Read</th></tr></thead><tbody>';
+  SKUKEYS.forEach(function(key){
+    var e=EL[key];
+    h+='<tr class="drill" onclick="openMom(\''+esc(key)+'\')"><td><b>'+esc(key)+'</b></td>';
+    if(!e){
+      var nt="Not measurable — needs at least 8 valid month-over-month pairs with real price variation. This SKU sells too intermittently to estimate a reliable slope.";
+      h+='<td onmousemove="tip(event,\''+nt+'\')" onmouseout="untip()">—</td><td>—</td><td>—</td>';
+      h+='<td onmousemove="tip(event,\''+nt+'\')" onmouseout="untip()"><span class="tag t-mut">not measurable</span></td></tr>';
+      return;
+    }
+    var full=elasticityRead(e.b,e.r2,e.n);
+    var read=e.b<-1 ? "elastic" : (e.b<=0 ? "inelastic" : "anomalous");
+    var readClass=e.b<-1 ? "t-neg" : (e.b<=0 ? "t-neg" : "t-pos");
+    h+='<td onmousemove="tip(event,\''+full+'\')" onmouseout="untip()">'+e.b.toFixed(2)+'</td>';
+    h+='<td onmousemove="tip(event,\''+r2Read(e.r2)+'\')" onmouseout="untip()">'+e.r2.toFixed(2)+'</td>';
+    h+='<td onmousemove="tip(event,\''+e.n+' month-over-month pairs used in the regression — more pairs mean a more stable estimate.\')" onmouseout="untip()">'+e.n+'</td>';
+    h+='<td onmousemove="tip(event,\''+full+'\')" onmouseout="untip()"><span class="tag '+readClass+'">'+read+'</span></td></tr>';
+  });
+  if(OVEL) h+='<tr style="background:rgba(240,185,11,.06)"><td><b>Overall (blended)</b></td><td onmousemove="tip(event,\''+elasticityRead(OVEL.b,OVEL.r2,OVEL.n)+'\')" onmouseout="untip()">'+OVEL.b.toFixed(2)+'</td><td>'+OVEL.r2.toFixed(2)+'</td><td>'+OVEL.n+'</td><td>portfolio signal</td></tr>';
+  h+='</tbody></table>';
+  document.getElementById("tEl").innerHTML=h;
+})();
+
+/* ============ COMPETITOR ============ */
+(function(){
+  var names=["BSRM","AKS","GPH","KSRM","Anwar","Rahim","AKIJ"];
+  var colors=["#ff5c7a","#a78bfa","#22c3aa","#ff8a3d","#2fd181","#8fa0c4","#f0b90b"];
+  var series=names.map(function(n,i){return {name:n,data:D.compTrend[n],w:n==="AKIJ"?3.5:1.6};});
+  lineChart(document.getElementById("compTrend"),series,D.compMonths,{yfmt:fmtMT,ytitle:"Tk / MT",colors:colors});
+  var akij=D.comp.find(function(c){return c[0]==="AKIJ ISPAT";})[1];
+  var sorted=D.comp.slice().sort(function(a,b){return b[1]-a[1];});
+  var html='<table><thead><tr><th>#</th><th>Competitor</th><th>Mill rate (Tk/MT)</th><th>Landing rate</th><th>Market offer</th><th>vs Akij</th></tr></thead><tbody>';
+  sorted.forEach(function(c,i){
+    var diff=c[1]-akij;
+    html+='<tr'+(c[0]==="AKIJ ISPAT"?' style="background:rgba(240,185,11,.08)"':'')+'>';
+    html+='<td>'+(i+1)+'</td><td><b>'+c[0]+'</b></td><td>'+taka(c[1])+'</td><td>'+taka(c[2])+'</td><td>'+taka(c[3])+'</td>';
+    html+='<td class="'+(diff>=0?"pos":"neg")+'">'+(diff>=0?"+":"")+taka(diff)+'</td></tr>';
+  });
+  html+='</tbody></table><div class="small" style="margin-top:8px">Akij ranks 7th of 25; ~Tk 5,900/MT below the premium leaders (AKS/BSRM). Average over May-2024 → Jan-2025 survey.</div>';
+  document.getElementById("compTable").innerHTML=html;
+})();
+
+/* ============ MARKET SHARE ============ */
+(function(){
+  var k=[
+    {l:"Share FY2023-24",v:"2.06%",n:mt(119202)+" MT · rank 7"},
+    {l:"Share FY2024-25",v:"2.59%",n:mt(145051)+" MT · +21.7% YoY",c:"up"},
+    {l:"Market leader",v:"BSRM 27.58%",n:"AKS 17.6% · GPH 12.2%"},
+    {l:"Latest (Sep'26)",v:"2.92%",n:mt(12523)+" MT"}
+  ];
+  document.getElementById("msKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note '+(x.c||"")+'">'+x.n+'</div></div>';}).join("");
+  var msSorted=D.ms.slice().sort(function(a,b){return b[2]-a[2];});
+  groupedBar(document.getElementById("msLadder"),msSorted.map(function(m){return m[0];}),[
+    {name:"FY2023-24 share %",data:msSorted.map(function(m){return m[1];})},
+    {name:"FY2024-25 share %",data:msSorted.map(function(m){return m[2];})}
+  ],{yfmt:function(v){return v.toFixed(0)+"%";},colors:["#3b4f8a","#f0b90b"]});
+  lineChart(document.getElementById("msTrend"),[{name:"AKIJ Ispat share %",data:D.msAkijShare,w:2.4}],D.msMonths,{yfmt:function(v){return v.toFixed(1)+"%";},ytitle:"Share %",colors:["#f0b90b"]});
+  var th='<table><thead><tr><th>Company</th><th>FY2023-24 Share</th><th>FY2023-24 Sales (MT)</th><th>FY2024-25 Share</th><th>FY2024-25 Sales (MT)</th><th>YoY</th></tr></thead><tbody>';
+  msSorted.forEach(function(m){
+    var g=(m[2]-m[1])/m[1]*100;
+    th+='<tr'+(m[0]==="AKIJ ISPAT"?' style="background:rgba(240,185,11,.08)"':'')+'>';
+    th+='<td><b>'+m[0]+'</b></td><td>'+m[1].toFixed(2)+'%</td><td>'+mt(m[3])+'</td><td><b>'+m[2].toFixed(2)+'%</b></td><td>'+mt(m[4])+'</td>';
+    th+='<td class="'+(g>=0?"pos":"neg")+'">'+(g>=0?"+":"")+g.toFixed(1)+'%</td></tr>';
+  });
+  th+='</tbody></table><div class="small" style="margin-top:8px">Total steel market ~5.6M MT/yr. Akij Ispat is the fastest-growing named mill (+21.7% vs BSRM +12.4%, AKS +20.6%), gaining share 2.06% → 2.59% while Anwar Ispat fell −46.8%.</div>';
+  document.getElementById("msTable").innerHTML=th;
+})();
+
+/* ============ DEALER ============ */
+(function(){
+  var total=0; D.commType.forEach(function(c){total+=c[1];});
+  var m25=0; D.comm.forEach(function(c){if((c[1]>=7?c[0]:c[0]-1)===2025)m25+=c[2];});
+  var k=[
+    {l:"Total commission (2023–26)",v:cr(total),n:"dealer incentive paid"},
+    {l:"FY2025-26 commission",v:cr(m25),n:"~"+(m25/D.yearlyRev[2025]*100).toFixed(1)+"% of FY25-26 sales"},
+    {l:"Incentive types",v:"12",n:"Monthly, Performance, Target, Delivery…"},
+    {l:"Largest type",v:"Monthly",n:cr(437049170)+" · 66% of total"}
+  ];
+  document.getElementById("commKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note">'+x.n+'</div></div>';}).join("");
+  var months=D.monthly;
+  var labels=months.map(function(m){return mn(m[1])+"'"+String(m[0]).slice(2);});
+  var cmap={}; D.comm.forEach(function(c){cmap[c[0]+"-"+c[1]]=c[2];});
+  var comm=months.map(function(m){return cmap[m[0]+"-"+m[1]]||0;});
+  dualLineChart(document.getElementById("commMonthly"),
+    {name:"Dealer commission (Tk)",data:comm},
+    {name:"Net sales (Tk)",data:months.map(function(m){return m[2];})},
+    labels,{yfmt:fmtY,y2fmt:fmtY,ytitle:"Commission (Tk)",y2title:"Net sales (Tk)",c1:"#22c3aa",c2:"#2f7dff"});
+  barChart(document.getElementById("commType"),D.commType.slice().sort(function(a,b){return b[1]-a[1];}).map(function(c){return {label:c[0],value:c[1],color:"#22c3aa"};}),{fmt:cr});
+})();
+
+/* ============ AREA ============ */
+(function(){
+  barChart(document.getElementById("zoneBar"),D.zones.slice(0,12).map(function(z){return {label:z[0],value:z[1],color:"#2f7dff"};}),{fmt:cr});
+  var tot=D.zones.reduce(function(a,z){return a+z[1];},0);
+  var html='<table><thead><tr><th>Zone</th><th>Value</th><th>Volume (MT)</th><th>Share of total</th></tr></thead><tbody>';
+  D.zones.forEach(function(z){ html+='<tr><td><b>'+z[0]+'</b></td><td>'+cr(z[1])+'</td><td>'+mt(z[2])+'</td><td>'+(z[1]/tot*100).toFixed(1)+'%</td></tr>'; });
+  html+='</tbody></table>';
+  document.getElementById("zoneTable").innerHTML=html;
+})();
+
+/* ============ GROWTH ============ */
+(function(){
+  var y23=D.yearlyRev[2023],y24=D.yearlyRev[2024],y25=D.yearlyRev[2025],y26=D.yearlyRev[2026];
+  var v23=D.yearlyDel[2023][0],v24=D.yearlyDel[2024][0],v25=D.yearlyDel[2025][0];
+  var k=[
+    {l:"FY2023-24",v:cr(y23),n:mt(v23)+" deliveries"},
+    {l:"FY2024-25",v:cr(y24),n:pf(pct(y24,y23))+" · "+mt(v24)+" deliveries",c:pct(y24,y23)>=0?"up":"down"},
+    {l:"FY2025-26",v:cr(y25),n:pf(pct(y25,y24))+" · "+mt(v25)+" deliveries",c:pct(y25,y24)>=0?"up":"down"},
+    {l:"FY2026-27 (5 mo)",v:cr(y26),n:"Jul–Nov 2026 · partial year",c:"up"},
+    {l:"2-yr CAGR",v:(((y25/y23)**0.5-1)*100).toFixed(1)+"%",n:"FY23-24 → FY25-26"}
+  ];
+  document.getElementById("growthKpis").innerHTML=k.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note '+(x.c||"")+'">'+x.n+'</div></div>';}).join("");
+  groupedBar(document.getElementById("revYear"),["FY2023-24","FY2024-25","FY2025-26"],[
+    {name:"Net sales (Tk)",data:[y23,y24,y25]}
+  ],{yfmt:fmtY,colors:["#2f7dff"]});
+  document.getElementById("revYear").insertAdjacentHTML("beforeend",
+    '<div class="small" style="margin-top:6px">Deliveries (fiscal-year activity proxy): FY23-24 '+mt(v23)+' → FY24-25 '+mt(v24)+' → FY25-26 '+mt(v25)+'. MT volume omitted — ERP quantity is mixed-unit (kg/MT) for rebar.</div>');
+})();
+
+/* ============ DIRECTION · DECISION · ACTION ============ */
+(function(){
+  var y23=D.yearlyRev[2023],y24=D.yearlyRev[2024],y25=D.yearlyRev[2025],y26=D.yearlyRev[2026];
+  var akijMs=D.ms.filter(function(m){return m[0]==="AKIJ ISPAT";})[0];
+  var share23=akijMs[1], share24=akijMs[2];
+  var lastShare=D.msAkijShare[D.msAkijShare.length-1], peakShare=Math.max.apply(null,D.msAkijShare);
+  function readB(b){ return b==null?"not measurable":(b>0?"anomalous":(b<-1?"elastic":"inelastic")); }
+
+  /* ---- 1. DIRECTION ---- */
+  document.getElementById("ddaDirExpl").innerHTML=
+    '<ul style="margin:4px 0 0">'+
+    '<li><b>S</b> — Clear growth phase: net revenue rose <b>৳927 Cr → ৳1,604 Cr</b> from FY23-24 to FY25-26.</li>'+
+    '<li><b>M</b> — <b>+28%</b> latest-year growth and a <b>+32%</b> 2-year CAGR; FY26-27 already <b>৳488 Cr</b> in 5 months (Jul–Nov).</li>'+
+    '<li><b>A</b> — Matching or beating FY25-26 (৳1,604 Cr) in FY26-27 is achievable if the quarter-start dips are closed.</li>'+
+    '<li><b>R</b> — Growth is volume- and share-led at a stable mill rate — the core engine is healthy.</li>'+
+    '<li><b>T</b> — Steel share climbed <b>2.06% → 2.59%</b> (peak <b>3.49%</b> in Mar\u201926); FY26-27 closes June 2027.</li></ul>';
+  var dirHtml='<table><thead><tr><th>FY</th><th>Net revenue</th><th>YoY</th><th>Steel share</th><th>Note</th></tr></thead><tbody>';
+  dirHtml+='<tr><td>FY2023-24</td><td>'+cr(y23)+'</td><td>—</td><td>'+share23.toFixed(2)+'%</td><td>baseline</td></tr>';
+  dirHtml+='<tr><td>FY2024-25</td><td>'+cr(y24)+'</td><td class="pos">'+pf(pct(y24,y23))+'</td><td>'+share24.toFixed(2)+'%</td><td>share +0.5 pp</td></tr>';
+  dirHtml+='<tr><td>FY2025-26</td><td>'+cr(y25)+'</td><td class="pos">'+pf(pct(y25,y24))+'</td><td>—</td><td>fastest growth</td></tr>';
+  dirHtml+='<tr><td>FY2026-27 (5 mo, Jul–Nov)</td><td>'+cr(y26)+'</td><td>in progress</td><td>'+lastShare.toFixed(2)+'% (Sep 26)</td><td>partial year</td></tr>';
+  dirHtml+='</tbody></table>';
+  document.getElementById("ddaDirTable").innerHTML=dirHtml;
+  var mlab=D.monthly.map(function(m){return mn(m[1])+String(m[0]).slice(2);});
+  var mrev=D.monthly.map(function(m){return m[2];});
+  lineChart(document.getElementById("ddaDirChart"),[{name:"Monthly net revenue",data:mrev,w:2.2}],mlab,{yfmt:fmtY,ytitle:"Net revenue",tipfmt:cr,colors:["#2f7dff"]});
+
+  /* ---- 2. DECISION ---- */
+  document.getElementById("ddaDecExpl").innerHTML=
+    'Three choices follow from the data. <ul>'+
+    '<li><b>Price with the mill rate, not against it.</b> The mainstream B500 10/12/16/20 mm carry only ~5% gross margin and several read elastic, so cost-plus discipline matters more than headline price.</li>'+
+    '<li><b>Concentrate the portfolio.</b> B500 grades are ~95% of tracked-SKU revenue and the top four SKUs (10/16/12/20 mm) are ~83% of it — focus planning, inventory and sales effort there.</li>'+
+    '<li><b>Protect the margin-rich niche.</b> 8 mm, 32 mm and the B420 12–25 mm grades earn 10–16% gross margin on small volume — grow them selectively rather than letting them drift. (B420 10 mm is a thin-margin grade, not part of this niche.)</li></ul>';
+  var skuMeta={}; D.sku.forEach(function(s){ skuMeta[s[0].replace("Akij Ispat ","")]={fy25:s[4],grade:s[1]}; });
+  var skuGp={}; D.price25.forEach(function(p){ skuGp[p[0].replace("Akij Ispat ","")]={gp:(p[2]-p[3])/p[2]*100}; });
+  var top8=SKUKEYS.map(function(k){ return {k:k, rev:skuMeta[k]?skuMeta[k].fy25:0, gp:skuGp[k]?skuGp[k].gp:0, b:EL[k]?EL[k].b:null}; })
+    .sort(function(a,b){return b.rev-a.rev;}).slice(0,8);
+  var decHtml='<table><thead><tr><th>SKU</th><th>FY25-26 rev</th><th>GP%</th><th>β</th><th>Read</th></tr></thead><tbody>';
+  top8.forEach(function(s){
+    decHtml+='<tr><td><b>'+esc(s.k)+'</b></td><td>'+cr(s.rev)+'</td><td class="'+(s.gp>=10?"pos":"")+'">'+s.gp.toFixed(1)+'%</td><td>'+(s.b==null?"—":s.b.toFixed(2))+'</td><td>'+readB(s.b)+'</td></tr>';
+  });
+  decHtml+='</tbody></table>';
+  document.getElementById("ddaDecTable").innerHTML=decHtml;
+  var decItems=top8.map(function(s){
+    var col=s.gp>=10?"#f0b90b":(s.gp>=6?"#22c3aa":"#2f7dff");
+    return {label:s.k,value:s.rev,color:col};
+  });
+  barChart(document.getElementById("ddaDecChart"),decItems,{fmt:cr});
+
+  /* ---- 3. ACTION ---- */
+  document.getElementById("ddaActExpl").innerHTML=
+    'Five concrete moves, each tied to a number. <ul>'+
+    '<li><b>Defend the top four SKUs and top five zones</b> — they drive most of the revenue.</li>'+
+    '<li><b>Hold the mill rate</b> (now ৳89,900) and pass scrap-cost changes through selectively, since the portfolio is inelastic on balance.</li>'+
+    '<li><b>Revalidate the GP cost basis</b> — gross margin rests on a point-in-time average cost.</li>'+
+    '<li><b>Target 3.5% monthly share</b> — already hit once (March 2026) — as the next threshold.</li>'+
+    '<li><b>Review the B420 tail</b> (~5% of revenue) for consolidation or re-pricing.</li></ul>';
+  var actRows=[
+    [1,"Defend top 4 SKUs (10/16/12/20 mm)","~83% of tracked-SKU revenue (৳1,266 Cr)","High","Secures core volume"],
+    [2,"Hold mill rate, pass scrap through selectively","portfolio inelastic on balance · rate ৳89,900","High","Revenue without volume loss"],
+    [3,"Grow top 5 zones","Cumilla, Noakhali, Mirpur, Gazipur, Daudkandi","High","Deepens fastest regions"],
+    [4,"Revalidate GP cost basis","GP% rests on point-in-time avg cost","Medium","Accurate margin view"],
+    [5,"Target 3.5% monthly share","peaked 3.49% in March 2026","Medium","Next share milestone"],
+    [6,"Review B420 tail","~7% of revenue, mixed margin","Low","Simpler portfolio"]
+  ];
+  var actHtml='<table><thead><tr><th>#</th><th>Action</th><th>Basis (data)</th><th>Priority</th><th>Impact</th></tr></thead><tbody>';
+  actRows.forEach(function(r){
+    var pc=r[3]==="High"?"pri-hi":(r[3]==="Medium"?"pri-md":"pri-lo");
+    actHtml+='<tr><td>'+r[0]+'</td><td><b>'+r[1]+'</b></td><td>'+r[2]+'</td><td class="'+pc+'">'+r[3]+'</td><td>'+r[4]+'</td></tr>';
+  });
+  actHtml+='</tbody></table>';
+  document.getElementById("ddaActTable").innerHTML=actHtml;
+  lineChart(document.getElementById("ddaActChart"),[
+    {name:"AKIJ monthly share",data:D.msAkijShare,w:2.4},
+    {name:"3.5% target",data:D.msAkijShare.map(function(){return 3.5;}),w:1.4,dash:"6,5"}
+  ],D.msMonths,{yfmt:function(v){return v.toFixed(1)+"%";},ytitle:"Share %",colors:["#f0b90b","#ff5c7a"],tipfmt:function(v){return v.toFixed(2)+"%";}});
+
+  /* ---- 4. LOSS-MAKING / AT-RISK SKUs ---- */
+  var lossRows=D.price25.map(function(p){
+    var name=p[0], short=name.replace("Akij Ispat ","");
+    var net=p[2], cost=p[3];
+    var gp=(net-cost)/net*100, np=gp-2.1;
+    var skuRow=D.sku.filter(function(s){return s[0]===name;})[0];
+    var rev=skuRow?skuRow[4]:0;
+    var b=EL[short]?EL[short].b:null;
+    return {k:short, gp:gp, np:np, rev:rev, b:b};
+  }).sort(function(a,b){return a.np-b.np;});
+  var lossSkus=lossRows.filter(function(r){return r.np<4;});
+  var lossRev=lossSkus.reduce(function(a,r){return a+r.rev;},0);
+  var msRod25=D.cat["MS Rod"][2025];
+  document.getElementById("ddaLossExpl").innerHTML=
+    'Six core grades — B500 10/12/16/20/25 mm and B420 10 mm — are the volume engine (<b>'+Math.round(lossRev/msRod25*100)+'% of MS-Rod revenue</b>) but earn the thinnest net margin (<b>~3.4%</b> after commission &amp; freight). Their cost is drifting up with scrap, so they sit one raw-material spike away from an actual loss. <ul>'+
+    '<li><b>Direction:</b> margin on the core is compressing — volume is safe, profit is not.</li>'+
+    '<li><b>Decision:</b> hold the mill rate (these grades are elastic — price cuts recover nothing, hikes leak volume). Attack the cost base instead.</li>'+
+    '<li><b>Action:</b> re-price B500 20 mm (the thinnest), push the 9–14% NP grades (8/32 mm, B420 12–25 mm), and renegotiate the ~1.3% dealer commission.</li></ul>';
+  var lossItems=lossRows.map(function(r){
+    var col=r.np<4?"#ff5c7a":(r.np<8?"#f0b90b":"#2fd181");
+    return {label:r.k, value:r.np, color:col};
+  });
+  barChart(document.getElementById("ddaLossChart"),lossItems,{fmt:function(v){return v.toFixed(1)+"%";}});
+  var lh='<table><thead><tr><th>SKU</th><th>FY25-26 rev</th><th>GP%</th><th>Est NP%</th><th>β</th><th>Read</th></tr></thead><tbody>';
+  lossRows.forEach(function(r){
+    lh+='<tr'+(r.np<4?' style="background:rgba(255,92,122,.06)"':'')+'><td><b>'+esc(r.k)+'</b></td><td>'+cr(r.rev)+'</td><td>'+r.gp.toFixed(1)+'%</td><td class="'+(r.np<4?"neg":"pos")+'"><b>'+r.np.toFixed(1)+'%</b></td><td>'+(r.b==null?"—":r.b.toFixed(2))+'</td><td>'+(r.np<4?"at-risk":"healthy")+'</td></tr>';
+  });
+  lh+='</tbody></table>';
+  document.getElementById("ddaLossTable").innerHTML=lh;
+
+  /* ---- 5. LOSS RECOVERY PLAN ---- */
+  function revYm(y,m){ for(var i=0;i<D.monthly.length;i++){ if(D.monthly[i][0]===y && D.monthly[i][1]===m) return D.monthly[i][2]; } return 0; }
+  var j25=revYm(2025,7),j26=revYm(2026,7),o25=revYm(2025,10),o26=revYm(2026,10);
+  var julPct=(j26-j25)/j25*100, octPct=(o26-o25)/o25*100;
+  var julCr=(j26-j25)/1e7, octCr=(o26-o25)/1e7;
+  var q1y26=(revYm(2026,7)+revYm(2026,8)+revYm(2026,9))/1e7;
+  var q1y25=(revYm(2025,7)+revYm(2025,8)+revYm(2025,9))/1e7;
+  var sharePeak=Math.max.apply(null,D.msAkijShare), shareLatest=D.msAkijShare[D.msAkijShare.length-1];
+  var shareLoss=sharePeak-shareLatest;
+  var sh='<b style="color:var(--gold)">';
+  document.getElementById("ddaRecoveryExpl").innerHTML=
+    sh+'Diagnosis — where the loss is</b><p style="margin:3px 0 9px"><b>July 2026 fell '+julPct.toFixed(1)+'% YoY</b> (−৳'+Math.abs(julCr).toFixed(1)+' Cr) and <b>October 2026 fell '+octPct.toFixed(1)+'% YoY</b> (−৳'+Math.abs(octCr).toFixed(1)+' Cr). August (+34.7%) and September (+43.5%) over-recovered, so Q1 as a whole grew <b>+'+((q1y26-q1y25)/q1y25*100).toFixed(0)+'%</b> — the loss is a <b>quarter-start dip</b>, not a structural decline. Steel share slipped <b>'+sharePeak.toFixed(2)+'% (Mar\u201926) → '+shareLatest.toFixed(2)+'% (Sep\u201926)</b>, a loss of '+shareLoss.toFixed(2)+' points.</p>'+
+    sh+'Who took the share &amp; how</b><p style="margin:3px 0 9px">The big mills price above Akij (BSRM ~৳92.6k, AKS ~৳92.9k, GPH ~৳92.6k vs Akij ~৳86.7k in the survey snapshot; Akij\u2019s current declared mill rate is ৳89,900). When Akij\u2019s order flow dips at each quarter-start, <b>BSRM (27.6% share), AKS (17.6%) and GPH (12.2%)</b> absorb the shortfall through wider distribution and trade credit — Akij leaks share exactly when its flow is thinnest.</p>'+
+    sh+'SMART recovery plan</b><ul style="margin:4px 0 9px">'+
+    '<li><b>S</b> — Smooth the quarter-starts: hold 4-week committed delivery schedules into July &amp; October. <b>M</b> — July &amp; October revenue back to ≥ ৳110 Cr each. <b>A</b> — already the norm in Aug/Sep. <b>R</b> — removes the single biggest loss. <b>T</b> — by next quarter close.</li>'+
+    '<li><b>S</b> — Recover share to 3.3%. <b>M</b> — +0.4 points from 2.92%. <b>A</b> — March 2026 already hit 3.49%. <b>T</b> — by FY26-27 year-end.</li>'+
+    '<li><b>S</b> — Defend core price discipline — no panic discounting (the core is elastic, β −2 to −7). <b>M</b> — realised price held at mill rate ±1%.</li>'+
+    '<li><b>S</b> — Shift mix to 8/32 mm &amp; B420 12–25 mm (9–14% NP) to offset the ~3.4% NP core. <b>M</b> — +5 points of revenue from these by Q3.</li>'+
+    '<li><b>S</b> — Renegotiate the \u2018Monthly\u2019 dealer commission (66% of pool, ~1.3% of sales). <b>M</b> — a 0.3-point cut ≈ +৳5 Cr/yr net profit.</li>'+
+    '<li><b>S</b> — Win back the 97 lost accounts (৳21.6 Cr last-month, ৳38 Cr Q4 exposure). <b>M</b> — re-contact the 52 never-reached (58%) first; price is the #1 stated reason to return. <b>A</b> — the CRM list already holds names, numbers and reasons. <b>R</b> — 68% of the value is 46 corporate accounts in Dhaka. <b>T</b> — a 90-day reactivation sprint.</li></ul>'+
+    sh+'Game theory — how competitors respond</b><ul style="margin:4px 0 9px">'+
+    '<li>Cut price → BSRM/AKS/GPH match (deeper pockets) → price war, no share gain, margin destroyed. <b>Do not.</b></li>'+
+    '<li>Hold price + better delivery &amp; credit → competitors lose the service lever; Akij wins on reliability, no price war.</li>'+
+    '<li>Raise price on the elastic core → volume leaks (β −2 to −7). Raise only inelastic/anomalous grades.</li>'+
+    '<li><b>Equilibrium:</b> match on price, compete on delivery, credit terms and mix.</li></ul>'+
+    sh+'7P — where to focus</b><ul style="margin:4px 0 0">'+
+    '<li><b>Product:</b> push 8/32 mm &amp; B420 (high margin); keep B500 core for volume.</li>'+
+    '<li><b>Price:</b> hold the mill rate; pass scrap through selectively; no discounting the elastic core.</li>'+
+    '<li><b>Place:</b> defend Cumilla, Noakhali, Mirpur, Gazipur and deepen quarter-start coverage — while noting 68% of the lost-account value (৳14.6 Cr) sits with 46 corporate accounts in Dhaka, so pair the field dealers with a dedicated corporate re-engagement track.</li>'+
+    '<li><b>Promotion:</b> outspent 3× in absolute terms (৳6.3 Cr vs BSRM/AKS ~৳20.5 Cr) but already leading on % of revenue (1.58%) — so fix reach, not just budget: shift outdoor→digital (45K vs AKS 496K followers; BSRM reaches 5× more online), add DSP/influencers, and convert our lowest-NSP edge into volume through demand-generation, not discounting.</li>'+
+    '<li><b>People:</b> 97 lost accounts (45 dealers, 46 corporate, 6 sister concern) map to 31 officers — but 52 (58%) were never even reached (call "did not receive") and only 16 were interviewed. 8 officers are high-risk (score &gt;25): Shamim Mia (52.7, 3), Shaiful Alam (42.2, 12), Taufiq Ahammed (41.9, 1), Feroz Ahmed (37.0, 4), Mahmudul Hasan (36.6, 13), Abdul Momin (34.1, 1), Shafiqur Rahman (31.2, 4) &amp; Sabbir Hossain (26.7, 2). Assign win-back ownership to these named officers, re-dial the 52 silent accounts first, and tie KPIs to recovered accounts, not volume alone.</li>'+
+    '<li><b>Process:</b> smooth the quarter-end push into steady monthly flow.</li>'+
+    '<li><b>Physical evidence:</b> the published daily mill rate (Trade) builds trust vs competitors\u2019 opaque pricing.</li></ul>';
+  var mm=[7,8,9,10];
+  groupedBar(document.getElementById("ddaRecoveryChart"), mm.map(function(m){return mn(m);}), [
+    {name:"FY25-26",data:mm.map(function(m){return revYm(2025,m);})},
+    {name:"FY26-27",data:mm.map(function(m){return revYm(2026,m);})}
+  ],{yfmt:fmtY,colors:["#3b4f8a","#f0b90b"]});
+  var rt='<table><thead><tr><th>Month</th><th>FY25-26</th><th>FY26-27</th><th>YoY</th><th>Read</th></tr></thead><tbody>';
+  mm.forEach(function(m){
+    var a=revYm(2025,m), b=revYm(2026,m), p=(b-a)/a*100;
+    rt+='<tr><td><b>'+mn(m)+'\u201926</b></td><td>'+cr(a)+'</td><td>'+cr(b)+'</td><td class="'+(p>=0?"pos":"neg")+'"><b>'+pf(p)+'</b></td><td>'+(p<0?"loss":"gain")+'</td></tr>';
+  });
+  rt+='<tr style="background:rgba(240,185,11,.06)"><td><b>Share (Mar\u201926 → Sep\u201926)</b></td><td>'+sharePeak.toFixed(2)+'%</td><td>'+shareLatest.toFixed(2)+'%</td><td class="neg"><b>−'+shareLoss.toFixed(2)+' pp</b></td><td>share lost</td></tr>';
+  rt+='</tbody></table>';
+  document.getElementById("ddaRecoveryTable").innerHTML=rt;
+})();
+
+/* ============ chart synopses (bullet takeaways) ============ */
+(function(){
+  syn("cPort", [
+    "Net revenue climbed <b>৳927 Cr → ৳1,604 Cr</b> from FY23-24 to FY25-26.",
+    "Bars are lumpy month-to-month — rebar demand is project-driven, not steady.",
+    "The teal line shows nearly every tracked grade sells each month (broad activity)."
+  ]);
+  syn("cBreadth", [
+    "Green = SKUs that raised price vs the prior month; red = SKUs that cut.",
+    "Bars swing together — the scrap-driven mill rate moves every grade at once.",
+    "Broad green = cost push; broad red = cost relief passing through."
+  ]);
+  syn("cJourney", [
+    "Most SKUs end the window priced above where they started.",
+    "The B500 core sizes moved together — they follow the mill rate, not individual demand."
+  ]);
+  syn("cThreePrice", [
+    "Net (solid blue) and Gross (dashed gold) overlap almost exactly — ~0% trade discount.",
+    "MRP (teal) hugs the mill rate, so rebar has no meaningful DP/TP/MRP ladder.",
+    "All three lines move as one because rebar sells at the daily mill rate."
+  ]);
+  syn("netPriceChart", [
+    "Realised net price per MT, overall or by grade.",
+    "The overall line dips to ~৳69k (Dec'25) and recovers to ~৳90k with the Mar'26 scrap surge.",
+    "Use the selector to isolate one grade or overlay all."
+  ]);
+  syn("grossPriceChart", [
+    "Gross (list) price is essentially identical to net — Akij discounts ~0%.",
+    "Only Jan'25 shows a small gap; otherwise the two lines coincide."
+  ]);
+  syn("mrpPriceChart", [
+    "MRP is the announced list price per MT.",
+    "It tracks the mill rate closely and is the ceiling reference for the trade rate."
+  ]);
+  syn("waterfall", [
+    "How a tonne of rebar breaks down: list ~৳83k → cost ~৳76k → gross profit ~৳7k (~8%).",
+    "After dealer commission & freight, net profit is roughly ~৳5k per MT.",
+    "The largest lever on profit is the raw-material (scrap) cost."
+  ]);
+  syn("gpnpTrend", [
+    "Realised price and scrap (raw-material) cost move together.",
+    "The gap between the lines is the melting+rolling margin — it narrows when scrap rises faster than the mill rate.",
+    "Gross profit is scrap-led, not demand-led."
+  ]);
+  syn("skuRevMonthly", [
+    "Monthly net revenue for a chosen SKU (or overall).",
+    "The B500 core sizes dominate the revenue mix."
+  ]);
+  syn("skuRank", [
+    "B500 DWR 10 mm is the biggest SKU (~34% of MS-Rod revenue).",
+    "The top four B500 sizes (10/16/12/20 mm) are ~82% of revenue.",
+    "B420 grades are the tail — roughly 5% combined."
+  ]);
+  syn("momChart", [
+    "One SKU's volume and realised price, month by month.",
+    "Where price and volume move together it is cost pass-through; opposite directions suggest demand.",
+    "Pick any grade from the selector, or click a row in the All SKUs table."
+  ]);
+  syn("cTradeTrend", [
+    "The declared Trade (mill) rate and the realised net price track each other.",
+    "The mill rate is updated almost daily and is the true sell-price anchor for rebar."
+  ]);
+  syn("cGap", [
+    "How far each SKU's latest realised price sits above (teal) or below (red) the Trade rate.",
+    "Most grades trade ~1% below the mill rate — a normal, tight discount band."
+  ]);
+  syn("cEl", [
+    "Own-price elasticity: teal = elastic (β&lt;−1), red = anomalous (β&gt;0).",
+    "Elastic grades lose more volume than the price gain — hike cautiously.",
+    "Positive β is usually scrap pass-through, not demand — investigate before pricing on it."
+  ]);
+  syn("cScatter", [
+    "Each point is one SKU-month, centred on that SKU's own average price & volume.",
+    "Top-left = price up, volume down (normal); top-right = both up (pass-through).",
+    "The cloud's slope is the portfolio's overall elasticity signal."
+  ]);
+  syn("compTrend", [
+    "Akij's mill rate vs top competitors, May'24–Jan'25.",
+    "Akij prices mid-pack — below BSRM/AKS/GPH, above the smaller mills."
+  ]);
+  syn("msLadder", [
+    "Steel market share by mill, FY2023-24 vs FY2024-25.",
+    "BSRM leads (~28%); Akij is 7th at 2.06% → 2.59%.",
+    "Akij is the fastest-rising named mill over the two years."
+  ]);
+  syn("msTrend", [
+    "Akij's monthly steel share, Dec'25 → Sep'26.",
+    "Share hovers 2.6–3.5%, peaking at 3.49% in Mar'26.",
+    "Recent months settle around ~2.9%."
+  ]);
+  syn("commMonthly", [
+    "Dealer commission vs net sales, monthly.",
+    "Commission tracks sales — it is a variable cost that scales with revenue."
+  ]);
+  syn("commType", [
+    "Total dealer incentive split by type.",
+    "'Monthly' is two-thirds of the pool — the single biggest lever on the commission line."
+  ]);
+  syn("zoneBar", [
+    "Top delivery zones by cumulative value (FY2022-23 → FY2026-27, up to Oct '26).",
+    "Cumilla, Noakhali, Mirpur and Gazipur lead — the core demand geography."
+  ]);
+  syn("revYear", [
+    "Net revenue by fiscal year: ৳927 Cr → ৳1,253 Cr → ৳1,604 Cr.",
+    "Growth is +35% (FY24-25) then +28% (FY25-26) — a 2-year CAGR of ~32%.",
+    "FY26-27 is only 5 months in (৳488 Cr), so do not annualise it yet."
+  ]);
+  syn("ddaDirChart", [
+    "The full monthly revenue trajectory behind the Direction story.",
+    "A clear upward trend with strong seasonality — the growth is real, not a one-off."
+  ]);
+  syn("ddaDecChart", [
+    "Top SKUs by FY25-26 revenue, coloured by gross-margin tier.",
+    "The biggest SKUs are thin-margin (blue ~5% GP); smaller ones carry 10–16% GP (gold).",
+    "This is the concentration-vs-margin trade-off the Decision block discusses."
+  ]);
+  syn("ddaActChart", [
+    "Monthly steel share with a dashed 3.5% target line.",
+    "3.5% is the next milestone — already reached once in Mar'26."
+  ]);
+  syn("ddaLossChart", [
+    "Six core grades carry ~88% of revenue but only ~3% net margin (red bars).",
+    "They are one scrap-cost spike away from an actual loss.",
+    "Hold price and fix cost — scrap sourcing, mix shift and the dealer commission."
+  ]);
+  syn("ddaRecoveryChart", [
+    "July and October are the loss months (down vs FY25-26); August and September over-recover.",
+    "The dip is a quarter-start timing effect, not a structural decline.",
+    "Recovery = smooth the quarter-starts and win back share in the thin months."
+  ]);
+})();
+
+/* ============ PROMOTION ============ */
+(function(){
+  var social=[
+    {label:"AKS",value:496,color:"#3b4f8a"},
+    {label:"BSRM",value:316,color:"#3b4f8a"},
+    {label:"GPH Ispat",value:290,color:"#3b4f8a"},
+    {label:"KSRM",value:200,color:"#3b4f8a"},
+    {label:"Anwar Ispat",value:196,color:"#3b4f8a"},
+    {label:"Rahim Steel",value:59,color:"#3b4f8a"},
+    {label:"Akij Ispat (us)",value:45,color:"#f0b90b"}
+  ];
+  barChart(document.getElementById("promoSocial"), social, {fmt:function(v){return v+"K";}});
+
+  var incent=[
+    {label:"Anwar Ispat",value:5000,color:"#3b4f8a"},
+    {label:"GPH Ispat",value:4000,color:"#3b4f8a"},
+    {label:"Akij Ispat (us)",value:4000,color:"#f0b90b"},
+    {label:"BSRM",value:3920,color:"#3b4f8a"},
+    {label:"AKS",value:3350,color:"#3b4f8a"},
+    {label:"Rahim Steel",value:500,color:"#3b4f8a"},
+    {label:"KSRM",value:450,color:"#3b4f8a"}
+  ];
+  barChart(document.getElementById("promoIncentive"), incent, {fmt:function(v){return "৳"+v.toLocaleString("en-US")+"/MT";}});
+
+  var ct='<table><thead><tr><th>Brand</th><th>FB followers</th><th>Ex-mill (Tk)</th><th>NSP (Tk)</th><th>Share FY26</th></tr></thead><tbody>';
+  ct+='<tr><td><b>BSRM</b></td><td>316K</td><td>96,000</td><td>92,080</td><td>27.7%</td></tr>';
+  ct+='<tr><td><b>AKS</b></td><td>496K</td><td>94,600</td><td>91,250</td><td>18.1%</td></tr>';
+  ct+='<tr><td><b>GPH Ispat</b></td><td>290K</td><td>95,000</td><td>91,000</td><td>9.3%</td></tr>';
+  ct+='<tr><td><b>KSRM</b></td><td>200K</td><td>91,100</td><td>90,650</td><td>7.1%</td></tr>';
+  ct+='<tr><td><b>Anwar Ispat</b></td><td>196K</td><td>94,500</td><td>89,500</td><td>3.0%</td></tr>';
+  ct+='<tr><td><b>Rahim Steel</b></td><td>59K</td><td>90,500</td><td>90,000</td><td>3.7%</td></tr>';
+  ct+='<tr style="background:rgba(240,185,11,.06)"><td><b>Akij Ispat</b></td><td>45K</td><td>93,000</td><td>89,000</td><td>2.9%</td></tr>';
+  ct+='</tbody></table>';
+  document.getElementById("promoCompTable").innerHTML=ct;
+
+  var gap='<ul style="margin:0;padding-left:18px;line-height:1.6;color:#c9d7ea">'+
+    '<li><b style="color:var(--gold)">Outspent 3× in absolute terms.</b> We spend ৳6.28 Cr vs BSRM/AKS ~৳20.5 Cr (Dec\u201925–Feb\u201926) — but we already lead on % of revenue (1.58% vs their 0.7–0.9%). The gap is scale, not effort.</li>'+
+    '<li><b style="color:var(--gold)">Digital is the widest capability gap.</b> 45K followers vs AKS 496K (11×) and BSRM 316K (7×); BSRM reaches 5× more people online and runs DSP + influencers we have not activated.</li>'+
+    '<li><b style="color:var(--gold)">Lowest-priced but not converting to share.</b> NSP ৳89,000 (lowest of the majors) yet share is stuck at 2.9% — the price edge leaks margin without pulling volume.</li>'+
+    '<li><b style="color:var(--gold)">Sharpest message, thinnest reach.</b> Our "12% stronger" USP is concrete vs competitors\u2019 "No.1" claims — but it is under-distributed.</li>'+
+    '<li><b style="color:var(--gold)">What to fix:</b> (1) redirect outdoor → digital + social and activate DSP/influencers to close the reach gap; (2) protect spend during the share-gain phase; (3) tie trade incentives to quarterly/annual targets; (4) convert the price edge into volume via engineer-loyalty &amp; demand-generation, not discounting.</li>'+
+    '</ul>';
+  document.getElementById("promoGap").innerHTML=gap;
+
+  // competitor offline campaigns (Jan–Apr'26)
+  var cp='<table><thead><tr><th>Company</th><th>Campaign</th><th>Type</th><th>Spend</th><th>Objective</th></tr></thead><tbody>';
+  cp+='<tr style="background:rgba(240,185,11,.06)"><td><b>Akij Ispat</b></td><td>"12% Stronger than Good Quality TMT Bars"</td><td>360 (ATL+BTL+Digital+OOH)</td><td>৳5.58 Cr</td><td>Brand awareness</td></tr>';
+  cp+='<tr><td><b>BSRM</b></td><td>"বাংলাদেশ এর নাম্বার ওয়ান স্টিল"</td><td>360 (ATL+BTL+Digital)</td><td>—</td><td>Retention</td></tr>';
+  cp+='<tr><td><b>GPH Ispat</b></td><td>"দৃঢ়তায় ১ নাম্বার"</td><td>Digital</td><td>৳1.2 Cr</td><td>TOF — B600 DWR launch</td></tr>';
+  cp+='<tr><td><b>AKS</b></td><td>"সর্বোচ্চ মানসম্পন্ন স্টিল"</td><td>Digital</td><td>৳0.3–0.5 Cr</td><td>Engagement</td></tr>';
+  cp+='<tr><td><b>Anwar Ispat</b></td><td>"Strongest Steel Since 1978"</td><td>360 (BTL+Digital)</td><td>৳5.5–8 Cr</td><td>Brand positioning</td></tr>';
+  cp+='</tbody></table>';
+  document.getElementById("promoCampaign").innerHTML=cp;
+
+  // digital spend (Dec'25–Feb'26)
+  var dig=[
+    {label:"BSRM",value:1.50,color:"#3b4f8a"},
+    {label:"GPH Ispat",value:0.50,color:"#3b4f8a"},
+    {label:"AKS",value:0.40,color:"#3b4f8a"},
+    {label:"Akij Ispat (us)",value:0.28,color:"#f0b90b"},
+    {label:"KSRM",value:0.20,color:"#3b4f8a"},
+    {label:"Anwar",value:0.15,color:"#3b4f8a"}
+  ];
+  barChart(document.getElementById("promoDigital"), dig, {fmt:function(v){return "৳"+v.toFixed(2)+" Cr";}});
+
+  // total spend vs revenue contribution (Dec'25–Feb'26)
+  var st='<table><thead><tr><th>Company</th><th>Total spend (Cr)</th><th>Revenue (Cr)</th><th>Offline %</th><th>Digital %</th><th>Total %</th></tr></thead><tbody>';
+  st+='<tr style="background:rgba(240,185,11,.06)"><td><b>Akij Ispat</b></td><td><b>৳6.28</b></td><td>397</td><td>1.51%</td><td>0.07%</td><td><b>1.58%</b></td></tr>';
+  st+='<tr><td><b>BSRM</b></td><td>৳20.50</td><td>3,114</td><td>0.61%</td><td>0.05%</td><td>0.66%</td></tr>';
+  st+='<tr><td><b>AKS</b></td><td>৳20.40</td><td>2,293</td><td>0.87%</td><td>0.02%</td><td>0.89%</td></tr>';
+  st+='<tr><td><b>GPH Ispat</b></td><td>৳12.50</td><td>1,353</td><td>0.89%</td><td>0.04%</td><td>0.93%</td></tr>';
+  st+='<tr><td><b>KSRM</b></td><td>৳6.40</td><td>788</td><td>0.79%</td><td>0.03%</td><td>0.82%</td></tr>';
+  st+='<tr><td><b>Anwar</b></td><td>৳4.15</td><td>338</td><td>1.19%</td><td>0.04%</td><td>1.23%</td></tr>';
+  st+='</tbody></table>';
+  document.getElementById("promoSpendTable").innerHTML=st;
+
+  syn("promoCampaign", [
+    "Akij's \"12% stronger\" USP campaign is the most concrete, product-led message in the set.",
+    "Competitors default to leadership claims (\"No.1\", \"strongest\") — a gap we can exploit with proof-based positioning.",
+    "Anwar is the biggest offline spender (৳5.5–8 Cr); GPH is launching a new grade (B600 DWR)."
+  ]);
+  syn("promoDigital", [
+    "BSRM outspends us 5× on digital (৳1.50 Cr vs ৳0.28 Cr) and reaches 5× more people (88M vs 16M).",
+    "BSRM also runs DSP, website and influencers — channels we have not activated.",
+    "Our ৳0.28 Cr buys 164M impressions — efficient, but too small to move share."
+  ]);
+  syn("promoSpendTable", [
+    "Akij spends the most as a % of revenue (1.58%) — but the least in absolute terms (৳6.28 Cr vs BSRM/AKS ~৳20.5 Cr).",
+    "The gap is scale, not effort: our small revenue base caps absolute spend.",
+    "So the lever is efficiency + share growth, not simply spending more."
+  ]);
+  syn("promoSocial", [
+    "Akij Ispat has 45K Facebook followers — the lowest of every tracked mill.",
+    "AKS (496K), BSRM (316K) and GPH (290K) out-reach us 7–11× on owned digital.",
+    "Digital is our single widest competitive gap and the cheapest channel to fix."
+  ]);
+  syn("promoIncentive", [
+    "Anwar leads trade incentives at ৳5,000/MT; Akij and GPH tie at ৳4,000/MT.",
+    "Our incentives are mid-pack but structured around monthly, not quarterly, targets.",
+    "Re-timing incentives to quarterly targets can smooth the quarter-start revenue dip."
+  ]);
+})();
+
+/* ============ WHERE TO PLAY · WHOM TO PLAY · HOW TO WIN ============ */
+(function(){
+  var regions=[
+    {name:"Dhaka", loss:71.94, rev:79.79, mt:9080, q4:1.52, q1:1.46, d:0.060},
+    {name:"Chattogram", loss:4.23, rev:52.75, mt:5995, q4:1.01, q1:0.96, d:0.040},
+    {name:"Barishal", loss:1.15, rev:3.40, mt:385, q4:0.06, q1:0.06, d:0.003},
+    {name:"Khulna", loss:0.73, rev:7.68, mt:867, q4:0.15, q1:0.14, d:0.010},
+    {name:"Rajshahi", loss:0.39, rev:9.45, mt:1072, q4:0.18, q1:0.17, d:0.010},
+    {name:"Rangpur", loss:0.26, rev:1.26, mt:141, q4:0.02, q1:0.02, d:0.001},
+    {name:"Mymensingh", loss:0.10, rev:5.55, mt:628, q4:0.11, q1:0.10, d:0.005}
+  ];
+  // log-scale horizontal bars so every division is readable (Dhaka dwarfs the rest on a linear scale)
+  (function(){
+    var items=regions.map(function(r){return {label:r.name,value:r.loss};});
+    var W=920,L=150,R=118,T=12,B=34,H=Math.max(280,items.length*34+44);
+    var svg=el("svg",{width:"100%",height:H,viewBox:"0 0 "+W+" "+H,preserveAspectRatio:"xMinYMin meet"});
+    var cont=document.getElementById("w2pRegionChart"); cont.innerHTML=""; cont.appendChild(svg);
+    var mn=Math.min.apply(null,items.map(function(i){return i.value;}));
+    var mx=Math.max.apply(null,items.map(function(i){return i.value;}));
+    var l0=Math.log10(mn), l1=Math.log10(mx);
+    var x0=L,x1=W-R,y0=T,y1=H-B;
+    function X(v){ return x0+(Math.log10(v)-l0)/(l1-l0)*(x1-x0); }
+    var bh=(y1-y0)/items.length;
+    [0.1,0.3,1,3,10,30,100].forEach(function(g){
+      if(g<mn||g>mx) return;
+      var gx=X(g);
+      svg.appendChild(el("line",{x1:gx,y1:y0,x2:gx,y2:y1,stroke:C.line,"stroke-width":1}));
+      svg.appendChild(txt(gx,y1+14,"৳"+g,{size:"11",fill:C.muted}));
+    });
+    svg.appendChild(el("line",{x1:x0,y1:y1,x2:x1,y2:y1,stroke:C.axis,"stroke-width":1}));
+    items.forEach(function(it,idx){
+      var yy=y0+idx*bh+4;
+      var bw=Math.max(3,X(it.value)-x0);
+      svg.appendChild(el("rect",{x:x0,y:yy,width:bw,height:bh-8,rx:3,fill:"#ff5c7a"}));
+      svg.appendChild(txt(x0-8,yy+bh/2-4,it.label,{anchor:"end",fill:C.muted,size:"13"}));
+      svg.appendChild(txt(X(it.value)+6,yy+bh/2-4,"−৳"+it.value.toFixed(2)+" Cr",{anchor:"start",fill:C.tx,size:"12.5"}));
+    });
+  })();
+
+  var rt='<table><thead><tr><th>Division</th><th>Loss (Cr)</th><th>Revenue (Cr)</th><th>Volume (MT)</th><th>Q4 to Q1 market share loss</th></tr></thead><tbody>';
+  regions.forEach(function(r){
+    rt+='<tr><td><b>'+r.name+'</b></td><td class="neg">−৳'+r.loss.toFixed(2)+'</td><td>৳'+r.rev.toFixed(2)+'</td><td>'+r.mt.toLocaleString("en-US")+'</td><td>'+r.q4.toFixed(2)+'% → '+r.q1.toFixed(2)+'% <span class="tag t-pos">−'+r.d.toFixed(3)+'%</span></td></tr>';
+  });
+  rt+='</tbody></table>';
+  document.getElementById("w2pRegionTable").innerHTML=rt;
+
+  document.getElementById("w2pWhereExpl").innerHTML=
+    '<b style="color:var(--gold)">Where the share went</b><ul style="margin:4px 0 0">'+
+    '<li>Overall share slipped <b>3.05% → 2.92%</b> (−0.13pp) from Q4 FY2025-26 (April-June) to Q1 FY 2026-27 (Jul-Sep) &amp; Oct.</li>'+
+    '<li><b>Dhaka</b> is the biggest loss: 1.52% → 1.46%, <b>−৳71.94 Cr</b> (~92% of the total revenue loss).</li>'+
+    '<li><b>Chattogram</b> is second: 1.01% → 0.96%, −৳4.23 Cr.</li>'+
+    '<li><b>By customer segment</b> (CRM, Oct 2026): the 97 lost accounts split 46 corporate (৳14.6 Cr last-month = 68% of value), 45 dealers (৳5.8 Cr) and 6 sister concern — the corporate book in Dhaka is the single biggest pocket to win back.</li>'+
+    '</ul>';
+  document.getElementById("w2pWhomExpl").innerHTML=
+    '<b style="color:var(--gold)">Who took it</b><ul style="margin:4px 0 0">'+
+    '<li>Our −0.13pp went to <b>RRM (+1.61pp)</b>, <b>Anwar Ispat (+0.87pp)</b> and <b>KSRM (+0.81pp)</b>.</li>'+
+    '<li>These are the same three mills that under-cut us on trade schemes in the lost divisions.</li>'+
+    '<li><b>GPH (−2.80pp)</b> lost more than we did — the competitive window is against the mid-tier mills (RRM / Anwar / KSRM), not the leaders BSRM / AKS.</li>'+
+    '<li><b>Why the customers left</b> (CRM interviews): price (6), product quality (5), field service (3) and project-completed / no demand (3) lead — and 52 of 89 called accounts (58%) were never actually reached.</li>'+
+    '</ul>';
+  document.getElementById("w2pHowExpl").innerHTML=
+    '<b style="color:var(--gold)">SMART playbook</b><ul style="margin:4px 0 0">'+
+    '<li><b>S</b> — Defend Dhaka first: it is half our revenue (৳79.79 Cr) and 92% of the loss. <b>M</b> — recover Dhaka to ≥1.52% share. <b>A</b> — achievable; the loss is recent. <b>R</b> — closes the single biggest gap. <b>T</b> — by Q3.</li>'+
+    '<li><b>S</b> — Counter RRM in the divisions it took. <b>M</b> — match its trade scheme within 5%. <b>A</b> — schemes are our strongest lever. <b>T</b> — 30 days.</li>'+
+    '<li><b>S</b> — Match KSRM &amp; Anwar dealer incentives in the divisions they took. <b>M</b> — dealer activation back to Q4 levels.</li>'+
+    '<li><b>S</b> — Re-point the engineer-loyalty program (৳1.1 Cr budgeted) at the lost divisions. <b>M</b> — +10 active engineers per lost division.</li>'+
+    '<li><b>S</b> — Hold price (we are already the lowest NSP) — win on service, delivery and schemes, not further discounting.</li>'+
+    '<li><b>S</b> — Run a 90-day reactivation sprint on the 97 lost accounts: re-dial the 52 never-reached first, answer the price objection with the proof-based "12% stronger" value story (not a discount), and assign each corporate account an owner. <b>M</b> — recover ≥20 of the 97 by Q3.</li></ul>';
+
+  syn("w2pRegionChart", [
+    "Dhaka is ~92% of the revenue loss (৳71.94 Cr) — a single-division problem.",
+    "Chattogram is the only other division above ৳1 Cr of loss.",
+    "Defending Dhaka closes almost the whole gap."
+  ]);
+})();
+
+/* ============ VOICE OF CUSTOMER ============ */
+(function(){
+  // [name, segment, division, district, lastMonth, lastSalesVolume, q4TotalVolume]
+  var VOC=[
+    ["ABC Real Estate Limited","Corporate","Dhaka","Dhaka","May 2026",1840000,13692300],
+    ["ASDWA Fashion Limited","Corporate","Dhaka","Narsingdi","May 2026",2754000,5529000],
+    ["International Trading Services Limited","Corporate","Dhaka","Dhaka","June 2026",1001000,1001000],
+    ["UDC Construction Ltd.","Corporate","Dhaka","Dhaka","April 2026",482500,482500],
+    ["National Development Engineers Ltd","Corporate","Dhaka","Dhaka","June 2026",17845600,33888600],
+    ["Spectra Properties Ltd","Corporate","Dhaka","Dhaka","June 2026",1092000,5286850],
+    ["China Construction Seventh Engineering Division Corp. Ltd. (WP-10)","Corporate","Dhaka","Dhaka","June 2026",29737500,69375000],
+    ["M/S Nalta Traders -Kaligonj- Shatkhira","Dealer","Khulna","Satkhira","June 2026",1281000,3899000],
+    ["M/S Harun Mollah & Sons - Faridpur","Dealer","Dhaka","Faridpur","June 2026",2844500,7070000],
+    ["M/S JR Corporation - Moghbazar","Dealer","Dhaka","Dhaka","April 2026",1777000,1777000],
+    ["Mr. Shaiful Alam For General Customer","Corporate","Dhaka","Dhaka","April 2026",1650620,1650620],
+    ["Essential Clothing Ltd.","Corporate","Dhaka","Dhaka","April 2026",379200,379200],
+    ["Marnaz Lead (Wastage)","Dealer","Chattogram","Chattogram","June 2026",2118684,10592100],
+    ["M/S Faruk & Mridha Brothers- Chandpur","Dealer","Chattogram","Chandpur","May 2026",1395000,3125000],
+    ["M/S Zilani Traders - Laxmipur","Dealer","Chattogram","Lakshmipur","June 2026",87450,87450],
+    ["Interstoff Group - South East Textiles (Pvt) Limited","Corporate","Dhaka","Dhaka","June 2026",4732000,9382000],
+    ["Baridhara Diplomatic Enclave Club Limited","Corporate","Dhaka","Dhaka","April 2026",351870,351870],
+    ["M/S Esha Enterprise - Narayanganj","Dealer","Dhaka","Dhaka","June 2026",111320,111320],
+    ["M/S Hussain Bhuiya Steel House - Kishorgonj","Dealer","Dhaka","Kishoreganj","May 2026",373200,373200],
+    ["M/S Anik Motors","Dealer","Rajshahi","Sirajganj","June 2026",1288000,2604000],
+    ["M/S Faruk Enterprise- Sherpur","Dealer","Mymensingh","Sherpur","April 2026",950000,950000],
+    ["M/S Sarker Trading- Sirajgonj","Dealer","Rajshahi","Sirajganj","April 2026",1330000,1330000],
+    ["M/S Mir Trading- Mymenshing","Dealer","Mymensingh","Mymensingh","June 2026",1102000,2080000],
+    ["M/S Allahar Dan Enterprise- Bagerhat","Dealer","Khulna","Bagerhat","June 2026",1281000,5252000],
+    ["Asia Composite Mills Limited","Corporate","Dhaka","Dhaka","April 2026",935000,935000],
+    ["M/S Jamal Enterprise- Kustia","Dealer","Dhaka","Dhaka","June 2026",1196000,2455510],
+    ["M/S Modina Shop- Potuakhali","Dealer","Barishal","Patuakhali","April 2026",1330000,1330000],
+    ["Astha Feed Industries Ltd.","Corporate","Dhaka","Dhaka","May 2026",1875750,1875750],
+    ["Cube Holdings Ltd.","Corporate","Dhaka","Dhaka","May 2026",2598400,3724000],
+    ["M/S Suma Traders- Lalmonirhat","Dealer","Rangpur","Lalmonirhat","April 2026",1410000,1410000],
+    ["M/S Emdadul Haque- Bogura","Dealer","Rajshahi","Bogura","April 2026",1316000,1316000],
+    ["M/S Alamgir Others -Laxmipur","Dealer","Chattogram","Lakshmipur","June 2026",86925,86925],
+    ["Credence Housing Ltd.","Corporate","Dhaka","Dhaka","June 2026",1848300,11051400],
+    ["Concord Engineers & Construction Ltd.","Corporate","Dhaka","Dhaka","May 2026",1196030,2627706],
+    ["ACI Formulations Limited","Corporate","Dhaka","Dhaka","May 2026",784550,1446750],
+    ["Paragon Poultry Limited","Corporate","Dhaka","Dhaka","April 2026",1846000,1846000],
+    ["IPCO Hotels Limited","Corporate","Dhaka","Dhaka","June 2026",635600,635600],
+    ["General Customer For Md.Shafiqur Rahman","Corporate","Dhaka","Dhaka","June 2026",1198600,1198600],
+    ["Rancon Edison Developments Limited","Corporate","","","April 2026",2775000,2775000],
+    ["M/S Baba Mayer Doa Enterprise- Tangail","Dealer","","","June 2026",917500,1582500],
+    ["Paragon Agro Ltd (Grand Parents)","Corporate","","","April 2026",658000,658000],
+    ["M/S Deen Enterprise, Narayanganj","Dealer","","","May 2026",470000,1078000],
+    ["A.M INTERNATIONAL (WASTAGE)","Dealer","Dhaka","Gazipur","April 2026",5727974,5727974],
+    ["Panda Shoes Industry Ltd","Corporate","","","June 2026",21549500,26815300],
+    ["Akij Dairy Ltd.","Sister Concern","","","June 2026",5721500,5721500],
+    ["Brig. General Md. Mizanur Rahman","Corporate","","","May 2026",784550,784550],
+    ["LIZDA Holding Limited","Corporate","","","May 2026",416700,416700],
+    ["M/S S.S Enterprise- Narayangonj","Dealer","Dhaka","Narayanganj","April 2026",518440,518440],
+    ["M/S Mazumder Trade Center- Cumilla","Dealer","","","June 2026",1380000,2790000],
+    ["Akij Healthcare & Hygiene Ltd.","Sister Concern","","","April 2026",2150500,2150500],
+    ["Multi Line Industries Ltd.","Corporate","","","May 2026",4625000,4625000],
+    ["M/S Rayhan Enterprise-Dhamrai","Dealer","","","May 2026",465000,2194000],
+    ["M/S Nazim Enterprise- Netrokona","Dealer","","","June 2026",1840000,1840000],
+    ["International Classic Composite Ltd","Corporate","","","April 2026",1159400,1159400],
+    ["M/S.Kalam And Brothers","Dealer","","","June 2026",1321150,2741650],
+    ["Janata Jute Mills Limited","Sister Concern","Dhaka","Dhaka","May 2026",344750,344750],
+    ["STBD SUN Trading Co.","Corporate","Dhaka","Dhaka","April 2026",472500,472500],
+    ["Center For Zakat Management (CZM)","Corporate","Dhaka","Dhaka","June 2026",1196000,1196000],
+    ["Advanced Chemical Industries Ltd.","Corporate","","","April 2026",2120400,2120400],
+    ["M/S Vai Vai Enterprise- Satkhira","Dealer","Khulna","Satkhira","June 2026",1281000,2597000],
+    ["M/S Idris Trades- Naogaon","Dealer","","","April 2026",1330000,1330000],
+    ["Bangladesh Trading Corporation","Dealer","","","June 2026",960750,1900750],
+    ["M/S Hawlader Enterprise- Madaripur","Dealer","","","June 2026",1380000,5614500],
+    ["Akij Bashir Energy Limited","Sister Concern","","","April 2026",1402500,1402500],
+    ["MI Engineering","Corporate","","","May 2026",969150,1909150],
+    ["M/S Bismillah Enterprise- Jamalpur","Dealer","","","April 2026",570000,570000],
+    ["M/S Kazi Traders- Jashore","Dealer","","","April 2026",1273000,1273000],
+    ["ACME TECHNOLOGIES LTD.","Corporate","","","June 2026",1176500,3238880],
+    ["M/S Anonna Steel Corparation - Gopalgonj","Dealer","","","April 2026",1414500,1414500],
+    ["TURAG GARMENTS AND HOSIERY MILLS LTD","Corporate","","","April 2026",1123200,1123200],
+    ["EPS International (wastage) ctg","Dealer","Chattogram","Chattogram","June 2026",3488038,11403469],
+    ["Pixel Space Development Ltd.","Corporate","","","April 2026",513150,513150],
+    ["UTTARAN  TRADERS","Corporate","","","April 2026",1375632,1375632],
+    ["M/S Mijan Enterprise- Patuakhali","Dealer","","","April 2026",1330000,1330000],
+    ["M/S Abu Hanif- Tangail","Dealer","","","April 2026",522500,522500],
+    ["Crown Cement PLC","Corporate","","","April 2026",1390500,1390500],
+    ["M/S Bablu Traders- Noakhali","Dealer","","","June 2026",640500,1949500],
+    ["M/S. MD. JAMIL IQBAL","Corporate","","","April 2026",4782500,4782500],
+    ["PROPERTY DEVELOPMENT LTD.","Corporate","","","June 2026",2270000,2270000],
+    ["M/S Mayer Doa Enterprise -Noakhali","Dealer","","","May 2026",1395000,2630000],
+    ["Fortress Realestate Limited","Corporate","","","April 2026",2107500,2107500],
+    ["Monalisa Ceramics (BD) Ltd.","Corporate","","","April 2026",5978687,5978687],
+    ["M/S Naziba Enterprises- Bhola","Dealer","","","June 2026",1380000,1380000],
+    ["M/S Mayer Doa Iron Store- Narayanganj","Corporate","","","May 2026",1678720,7038720],
+    ["M/S Talukder Traders- Kishoreganj","Dealer","","","June 2026",780000,2302400],
+    ["Mobasshirah Trading Co. - Sirajganj","Dealer","","","June 2026",1284750,2600750],
+    ["M/S Ali & Brothers- Laxmipur","Dealer","","","June 2026",1372500,5613000],
+    ["M/S Modhuban Enterprise- Chandpur","Dealer","","","April 2026",665000,665000],
+    ["Tamanna Faroque Theama","Corporate","","","June 2026",2685000,5493000],
+    ["Mr.  Mosaraff Hossain (Deputy Manager – Finance)","Corporate","","","April 2026",370000,370000],
+    ["Akij Renewable Energy and Automobiles Ltd.","Sister Concern","","","April 2026",581560,581560],
+    ["Crown Food and Beverage PLC.","Corporate","","","April 2026",7137900,7137900],
+    ["Yunusco (BD) Limited","Corporate","","","April 2026",467500,467500],
+    ["M/S Dhaka Iron Store- Jashore","Dealer","","","May 2026",1399500,2809500],
+    ["M/S Moriom Enterprise- Bogura","Dealer","","","May 2026",1320200,1320200],
+    ["MS. IQBAL TRADERS (RAMIM Group)","Corporate","","","May 2026",1840000,1840000],
+    ["Takaful Properties Limited","Sister Concern","","","June 2026",1911000,1911000]
+  ];
+  function cr1(v){ return "৳ "+(v/1e7).toFixed(1)+" Cr"; }
+  var n={Corporate:0,Dealer:0,"Sister Concern":0}, lv={Corporate:0,Dealer:0,"Sister Concern":0}, q4={Corporate:0,Dealer:0,"Sister Concern":0};
+  VOC.forEach(function(r){ var s=r[1]; n[s]++; lv[s]+=r[5]; q4[s]+=r[6]; });
+  var totLv=lv.Corporate+lv.Dealer+lv["Sister Concern"], totQ4=q4.Corporate+q4.Dealer+q4["Sister Concern"];
+  document.getElementById("vocKpis").innerHTML=[
+    {l:"Total records",v:VOC.length,n:"CRM lost-dealer sheet",c:""},
+    {l:"Dealers (Trade)",v:n.Dealer,n:cr1(lv.Dealer)+" last-month",c:""},
+    {l:"Corporate",v:n.Corporate,n:cr1(lv.Corporate)+" last-month",c:""},
+    {l:"Sister Concern",v:n["Sister Concern"],n:cr1(lv["Sister Concern"])+" last-month",c:""},
+    {l:"Value at risk",v:cr1(totLv),n:cr1(totQ4)+" Q4 exposure",c:"down"}
+  ].map(function(x){ return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note '+(x.c||'')+'">'+x.n+'</div></div>'; }).join("");
+
+  function segPill(s){
+    var c=s==="Dealer"?{fg:"#f0b90b",bg:"rgba(240,185,11,.12)",bd:"rgba(240,185,11,.38)"}:s==="Corporate"?{fg:"#7fb0ff",bg:"rgba(47,125,255,.12)",bd:"rgba(47,125,255,.38)"}:{fg:"#a78bfa",bg:"rgba(167,139,250,.12)",bd:"rgba(167,139,250,.38)"};
+    return '<span class="tag" style="color:'+c.fg+';border-color:'+c.bd+';background:'+c.bg+'">'+s+'</span>';
+  }
+  window.vocSeg="all"; window.vocQ=""; window.vocPage=1;
+  var VOC_PER=10;
+  window.vocRender=function(){
+    var seg=window.vocSeg, q=(window.vocQ||"").toLowerCase();
+    var all=VOC.filter(function(r){
+      if(seg!=="all" && r[1]!==seg) return false;
+      if(q && r[0].toLowerCase().indexOf(q)<0) return false;
+      return true;
+    });
+    var pages=Math.max(1,Math.ceil(all.length/VOC_PER));
+    if(window.vocPage>pages) window.vocPage=pages;
+    if(window.vocPage<1) window.vocPage=1;
+    var start=(window.vocPage-1)*VOC_PER;
+    var rows=all.slice(start,start+VOC_PER);
+    var h='<table><thead><tr><th>#</th><th>Customer</th><th>Segment</th><th>Division</th><th>District</th><th>Last Month</th><th>Last-Month Sales</th><th>Q4 Exposure</th></tr></thead><tbody>';
+    rows.forEach(function(r,i){
+      h+='<tr><td>'+(start+i+1)+'</td><td style="text-align:left"><b>'+esc(r[0])+'</b></td><td>'+segPill(r[1])+'</td><td>'+(r[2]||"—")+'</td><td>'+(r[3]||"—")+'</td><td>'+r[4]+'</td><td>৳'+r[5].toLocaleString("en-US")+'</td><td>৳'+r[6].toLocaleString("en-US")+'</td></tr>';
+    });
+    h+='</tbody></table>';
+    document.getElementById("vocTable").innerHTML=h;
+    var sLv=0,sQ4=0; all.forEach(function(r){sLv+=r[5];sQ4+=r[6];});
+    document.getElementById("vocCount").innerHTML=all.length+" accounts · last-month sales ৳"+sLv.toLocaleString("en-US")+" · Q4 exposure ৳"+sQ4.toLocaleString("en-US");
+    var pg='<span style="color:var(--muted);font-size:13px">Showing '+(all.length?(start+1):0)+'–'+(start+rows.length)+' of '+all.length+'</span>';
+    pg+='<span style="display:flex;gap:6px;align-items:center">';
+    pg+='<button class="fbtn" '+(window.vocPage<=1?'disabled style="opacity:.4;cursor:default"':'')+' onclick="vocGo('+(window.vocPage-1)+')">‹ Prev</button>';
+    pg+='<span style="color:var(--tx);font-size:13px;padding:0 4px">Page '+window.vocPage+' of '+pages+'</span>';
+    pg+='<button class="fbtn" '+(window.vocPage>=pages?'disabled style="opacity:.4;cursor:default"':'')+' onclick="vocGo('+(window.vocPage+1)+')">Next ›</button>';
+    pg+='</span>';
+    document.getElementById("vocPager").innerHTML=pg;
+  };
+  window.vocGo=function(p){ window.vocPage=p; vocRender(); };
+  window.vocFilter=function(s){
+    window.vocSeg=s; window.vocPage=1;
+    [].forEach.call(document.querySelectorAll("#voc .fbtn"),function(b){ b.classList.toggle("on", b.getAttribute("data-seg")===s); });
+    vocRender();
+  };
+  window.vocSearch=function(){ window.vocQ=document.getElementById("vocSearch").value; window.vocPage=1; vocRender(); };
+  vocRender();
+
+  var reasons=[
+    {label:"Price",value:6},
+    {label:"Product Quality",value:5},
+    {label:"Sales / Field Service",value:3},
+    {label:"No Demand / Work",value:3},
+    {label:"Still Active (data error)",value:3},
+    {label:"Competitor / Price-switch",value:2},
+    {label:"Supply / Availability",value:1}
+  ];
+  barChart(document.getElementById("vocReason"), reasons, {fmt:String});
+
+  var cs=[
+    ["Did not receive",52,"58.4%"],
+    ["Received &amp; Successful",16,"18.0%"],
+    ["Busy",8,"9.0%"],
+    ["Received, not interested",6,"6.7%"],
+    ["Received but busy",4,"4.5%"],
+    ["Switched off",2,"2.2%"],
+    ["Wrong number",1,"1.1%"]
+  ];
+  var cst='<table><thead><tr><th>Status</th><th>Count</th><th>% of total</th></tr></thead><tbody>';
+  cs.forEach(function(r){ cst+='<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td></tr>'; });
+  cst+='<tr style="background:rgba(240,185,11,.06)"><td><b>Total</b></td><td><b>89</b></td><td>100%</td></tr>';
+  cst+='</tbody></table>';
+  document.getElementById("vocCallStatus").innerHTML=cst;
+
+  document.getElementById("vocActions").innerHTML=
+    '<p style="margin:0 0 8px"><b style="color:var(--gold)">What brings them back:</b> &ldquo;If the price is reduced, he is certainly willing to use Akij Ispat again.&rdquo;</p>'+
+    '<ul style="margin:0;padding-left:18px;line-height:1.6;color:#c9d7ea">'+
+    '<li><b>Price</b> — most common churn driver (6 mentions). Review price positioning vs BSRM/AKS.</li>'+
+    '<li><b>Quality</b> — rod quality complaints (5). Escalate to Production.</li>'+
+    '<li><b>Field service</b> — &ldquo;no representative / negligence&rdquo; (3). Reassign coverage.</li>'+
+    '<li><b>Demand</b> — project-driven, project completed (3). Re-engage on next project.</li>'+
+    '<li><b>Supply</b> — ensure the specific product lines dealers used (1).</li>'+
+    '<li><b>Data</b> — 3 customers said still active (data error). Reconcile the lost list.</li>'+
+    '</ul>';
+
+  syn("vocReason", [
+    "Price is the #1 churn driver (6 of 21 mentions), followed by product quality (5).",
+    "Field-service gaps and project-driven 'no demand' also surfaced.",
+    "3 customers are actually still active — a data error to reconcile."
+  ]);
+})();
+
+/* ============ PEOPLE ============ */
+(function(){
+  var kpis=[
+    {l:"Sales officers",v:"31",n:"active force"},
+    {l:"Lost customers",v:"91",n:"silent Q1 FY26-27 & Oct"},
+    {l:"Sale lost",v:"৳35.2 Cr",n:"3,827 MT · Q4 FY25-26 → Q1 FY26-27 & Oct",c:"down"},
+    {l:"Collection lost",v:"৳32.5 Cr",n:"Q4 FY25-26 → Q1 FY26-27 & Oct",c:"down"},
+    {l:"High-risk officers",v:"8",n:"risk score > 25",c:"down"}
+  ];
+  document.getElementById("peopleKpis").innerHTML=kpis.map(function(x){
+    return '<div class="card kpi"><div class="lab">'+x.l+'</div><div class="val">'+x.v+'</div><div class="note '+(x.c||'')+'">'+x.n+'</div></div>';
+  }).join("");
+
+  // [name, designation, phone, custLost, saleLostMT, saleLostBDT, collLostBDT, risk, lostCustomerNames, evaluation, needToImprove]
+  var PPL=[
+    ["Md. Shamim Mia","Deputy Manager","01672353759",3,791,73151000,74357460,52.7,"China Construction Seventh Engineering Division Corp. Ltd. (WP-10), International Trading Services Limited, Rancon Edison Developments Limited","Sales below target (330 vs 550); revenue below target (41.5M vs 50M)","Sales below target (60%) · Revenue below target (83%)"],
+    ["Md. Mahmudul Hasan","Deputy Manager","—",13,502.75,46525906,40707308,36.6,"Interstoff Group - South East Textiles (Pvt) Limited, Asia Composite Mills Limited, Astha Feed Industries Ltd., Credence Housing Ltd., Concord Engineers & Construction Ltd., ACI Formulations Limited, Multi Line Industries Ltd., Center For Zakat Management (CZM), Advanced Chemical Industries Ltd., Crown Cement PLC, PROPERTY DEVELOPMENT LTD., Crown Food and Beverage PLC., Yunusco (BD) Limited","Claims sales target met/exceeded but lost 46,525,906 BDT; revenue below target (115.9M vs 118.8M)","Revenue below target (98%)"],
+    ["Md. Feroz Ahmed","Senior Manager","01772100173",4,590.4,54027150,67834888,37.0,"ABC Real Estate Limited, National Development Engineers Ltd, Spectra Properties Ltd, International Classic Composite Ltd","Sales below target (1950 vs 2150); revenue below target (14 vs 15)","Sales below target (91%) · Revenue below target (93%)"],
+    ["Mr. Shaiful Alam","Senior Manager","01776293670",12,535,49254140,26069658,42.2,"Baridhara Diplomatic Enclave Club Limited, Mr. Shaiful Alam For General Customer, UDC Construction Ltd., ASDWA Fashion Limited, IPCO Hotels Limited, Panda Shoes Industry Ltd, Brig. General Md. Mizanur Rahman, LIZDA Holding Limited, STBD SUN Trading Co., M/S. MD. JAMIL IQBAL, Tamanna Faroque Theama, MS. IQBAL TRADERS (RAMIM Group)","Sales below target (1900 vs 2350); revenue below target (164.9M vs 205.6M)","Sales below target (81%) · Revenue below target (80%)"],
+    ["Md. Sirajul Islam","Assistant Manager","01712436510",8,246.43,19520530,11255127,16.9,"Akij Dairy Ltd., Akij Healthcare & Hygiene Ltd., Janata Jute Mills Limited, Akij Bashir Energy Limited, M/S Mayer Doa Iron Store- Narayanganj, Mr. Mosaraff Hossain (Deputy Manager - Finance), Akij Renewable Energy and Automobiles Ltd., Takaful Properties Limited","Claims sales target met/exceeded but lost 19,520,530 BDT",""],
+    ["Md. Shafiqur Rahman","Deputy Manager","—",4,75.2,6941480,14217626,31.2,"Paragon Poultry Limited, General Customer For Md.Shafiqur Rahman, Paragon Agro Ltd (Grand Parents), ACME TECHNOLOGIES LTD.","Sales below target (175.7 vs 300); revenue below target (14.0M vs 25.8M)","Sales below target (59%) · Revenue below target (54%)"],
+    ["Redwan Hossain Bablu","Deputy Manager","—",4,109.75,9974969,7803600,21.1,"Pixel Space Development Ltd., UTTARAN TRADERS, Fortress Realestate Limited, Monalisa Ceramics (BD) Ltd.","Sales below target (276 vs 400); revenue below target (24.7M vs 30M)","Sales below target (69%) · Revenue below target (82%)"],
+    ["Kishor Kumar Kar","Senior Territory Manager","01671681340",2,122.59,13352969,13204750,8.6,"EPS International (wastage) ctg, M/S Bablu Traders- Noakhali","Claims sales target met/exceeded but lost 13,352,969 BDT",""],
+    ["Atik Ishrak","Senior Officer","—",4,76.5,7135550,6059310,13.3,"Essential Clothing Ltd., Cube Holdings Ltd., MI Engineering, TURAG GARMENTS AND HOSIERY MILLS LTD","Claims sales target met/exceeded but lost 7,135,550 BDT; revenue below target (21.0M vs 27.0M)","Revenue below target (78%)"],
+    ["Md. Sariful Islam","Senior Territory Officer","—",3,70,6534750,5517100,6.3,"M/S Anik Motors, M/S Sarker Trading- Sirajgonj, Mobasshirah Trading Co. - Sirajganj","Claims sales target met/exceeded but lost 6,534,750 BDT","Retention overstated"],
+    ["Md Magfirul Amin","—","—",3,62.05,5787375,4219100,5.9,"M/S Alamgir Others -Laxmipur, M/S Zilani Traders - Laxmipur, M/S Ali & Brothers- Laxmipur","",""],
+    ["Md. Abu Taher","Senior Territory Officer","—",2,70,6496000,6287800,12.5,"M/S Nalta Traders -Kaligonj- Shatkhira, M/S Vai Vai Enterprise- Satkhira","Sales below target (84 vs 98); revenue below target (13 vs 15)","Sales below target (86%) · Revenue below target (85%)"],
+    ["Md. Maniruzzaman","—","—",1,76,7070000,7251750,4.5,"M/S Harun Mollah & Sons - Faridpur","",""],
+    ["Makbul Hosain","Senior Engineer","—",2,43.4,4082500,4609440,4.3,"M/S Kazi Traders- Jashore, M/S Dhaka Iron Store- Jashore","",""],
+    ["Md. Monzurul Islam","Senior Territory Officer","—",2,42.4,3920000,3835200,4.2,"M/S Mir Trading- Mymenshing, M/S Nazim Enterprise- Netrokona","Claims sales target met/exceeded but lost 3,920,000 BDT","Retention overstated"],
+    ["Refajur Rahman","Assistant Manager","01916241123",1,56,5252000,6815600,6.2,"M/S Allahar Dan Enterprise- Bagerhat","Sales below target (409 vs 450)","Sales below target (91%)"],
+    ["Md. Arif-Uzzaman","Territory Manager","—",2,39.5,3677750,2435900,3.8,"M/S JR Corporation - Moghbazar, Bangladesh Trading Corporation","Claims sales target met/exceeded but lost 3,677,750 BDT","Retention overstated"],
+    ["Redwan Bukhari","Territory Manager","—",2,42,3790000,1925180,3.8,"M/S Faruk & Mridha Brothers- Chandpur, M/S Modhuban Enterprise- Chandpur","Claims sales target met/exceeded but lost 3,790,000 BDT",""],
+    ["Rakibul Islam","—","—",2,28,2660000,2695100,3.6,"M/S Modina Shop- Potuakhali, M/S Mijan Enterprise- Patuakhali","",""],
+    ["Md. Sirajul Islam (Bogura)","Assistant Manager","—",2,28,2636200,2685400,4.3,"M/S Emdadul Haque- Bogura, M/S Moriom Enterprise- Bogura","Reports 99% retention (vs 100% target); sales below target (41 vs 42)","Sales below target (98%)"],
+    ["Md. Nasir Uddin","—","—",2,22.5,2105000,2038400,3.3,"M/S Baba Mayer Doa Enterprise- Tangail, M/S Abu Hanif- Tangail","",""],
+    ["Md. Khairul Bashar","Territory Manager","01963536706",2,30.6,2675600,1297280,3.3,"M/S Hussain Bhuiya Steel House - Kishorgonj, M/S Talukder Traders- Kishoreganj","Claims sales target met/exceeded but lost 2,675,600 BDT",""],
+    ["Md. Sabbir Hossain","Senior Territory Officer","—",2,16,1520000,1470500,26.7,"M/S Faruk Enterprise- Sherpur, M/S Bismillah Enterprise- Jamalpur","Sales below target (50 vs 95)","Sales below target (53%)"],
+    ["Md. Mosaddekur Rahman","Senior Territory Manager","—",2,12.61,1189320,775000,4.6,"M/S Esha Enterprise - Narayanganj, M/S Deen Enterprise Narayanganj","Reports 95% retention (vs 100% target); sales below target (98 vs 100)","Sales below target (98%)"],
+    ["Md. Shobuz Rana","Territory Manager","—",1,23.2,2194000,2336290,2.2,"M/S Rayhan Enterprise-Dhamrai","Claims sales target met/exceeded but lost 2,194,000 BDT","Retention overstated"],
+    ["Minhazul Alam","Senior Territory Manager","—",1,29.5,2741650,1185500,6.9,"M/S.Kalam And Brothers","Sales below target (113 vs 140)","Sales below target (81%)"],
+    ["Md. Abdul Momin","Territory Manager","—",1,26.3,2455510,1190290,34.1,"M/S Jamal Enterprise- Kustia","Sales below target (15 vs 42)","Sales below target (36%)"],
+    ["Taufiq Ahammed","Territory Officer","—",1,15,1414500,1627250,41.9,"M/S Anonna Steel Corparation - Gopalgonj","Sales below target (14 vs 70); revenue below target (3 vs 15)","Sales below target (20%) · Revenue below target (20%)"],
+    ["Md. Hossain Tarif","—","—",1,15,1380000,1380000,1.8,"M/S Naziba Enterprises- Bhola","",""],
+    ["Md. Babor Ali","Territory Sales Officer","—",1,14,1330000,1358700,3.0,"M/S Idris Trades- Naogaon","Reports 95% retention (vs 100% target); claims sales target met/exceeded but lost 1,330,000 BDT",""],
+    ["Md. Rakibul Islam","—","—",1,15,1410000,337500,1.6,"M/S Suma Traders- Lalmonirhat","",""]
+  ];
+  var GEO=[
+    ["Corporate (Region)","Corporate (Area)","Shamim Mia (Corporate)"],
+    ["Corporate (Region)","Corporate (Area)","Mahmudul Hasan (Corporate)"],
+    ["Corporate (Region)","Corporate (Area)","Feroz Ahmad (Corporate)"],
+    ["Corporate (Region)","Corporate (Area)","Shaiful Alam (Corporate)"],
+    ["Sister Concern (Region)","Sister Concern (Area)","Sirajul Islam (Corporate + Sister Concern)"],
+    ["Corporate (Region)","Corporate (Area)","Shafiq Rahman (Corporate)"],
+    ["Corporate (Region)","Corporate (Area)","Redwan Hossain (Corporate)"],
+    ["Noakhali","Noakhali","Noakhali-1"],
+    ["Corporate (Region)","Corporate (Area)","Atik Ishrak (Corporate)"],
+    ["Bogura","Rajshahi","Sirajganj"],
+    ["Noakhali","Chandpur/Laxmipur","Laxmipur"],
+    ["Khulna/Faridpur","Khulna","Satkhira"],
+    ["Khulna/Faridpur","Barishal","Faridpur & Rajbari"],
+    ["Khulna/Faridpur","Jhenaidah","Jashore"],
+    ["Dhaka Outer & Mymensingh","Mymensingh","Mymensingh + Netrokona"],
+    ["Khulna/Faridpur","Khulna","Khulna-2 & Bagerhat"],
+    ["Dhaka South","Jatrabari","Demra"],
+    ["Noakhali","Chandpur/Laxmipur","Chandpur Sadar + Hajiganj"],
+    ["Khulna/Faridpur","Barishal","Patuakhali & Barguna"],
+    ["Bogura","Bogura","Bogura"],
+    ["Dhaka Outer & Mymensingh","Gazipur","Tangail Sadar"],
+    ["Dhaka Outer & Mymensingh","Narsingdi","Kishoreganj"],
+    ["Dhaka Outer & Mymensingh","Mymensingh","Jamalpur"],
+    ["Dhaka South","Narayanganj","Narayanganj-1"],
+    ["Dhaka North","Savar","Savar"],
+    ["Khulna/Faridpur","Barishal","Barishal"],
+    ["Khulna/Faridpur","Jhenaidah","Kushtia"],
+    ["Khulna/Faridpur","Khulna","Gopalganj & Narail"],
+    ["Khulna/Faridpur","Barishal","Bhola"],
+    ["Bogura","Bogura","Naogaon"],
+    ["Bogura","Rangpur","Rangpur"]
+  ];
+  var order=PPL.map(function(_,i){return i;});
+  order.sort(function(a,b){ var x=GEO[a][0]+'|'+GEO[a][1]+'|'+GEO[a][2], y=GEO[b][0]+'|'+GEO[b][1]+'|'+GEO[b][2]; return x<y?-1:(x>y?1:0); });
+  function riskClass(r){ return r>25?'t-pos':(r>=10?'t-warn':'t-neg'); }
+  var pr='<table><thead><tr><th>#</th><th>Officer</th><th>Designation</th><th>Mobile</th><th>Region</th><th>Area</th><th>Territory</th><th>Customers Lost</th><th>Sale Lost (MT)</th><th>Sale Lost (BDT)</th><th>Risk Score</th></tr></thead><tbody>';
+  order.forEach(function(idx,i){
+    var o=PPL[idx], g=GEO[idx];
+    pr+='<tr class="drill" onclick="peopleShow('+idx+')"'+(o[7]>25?' style="background:rgba(255,92,122,.07)"':'')+'><td>'+(i+1)+'</td><td><b>'+o[0]+'</b></td><td>'+o[1]+'</td><td>'+o[2]+'</td><td>'+g[0]+'</td><td>'+g[1]+'</td><td>'+g[2]+'</td><td>'+o[3]+'</td><td>'+o[4]+'</td><td>৳'+o[5].toLocaleString("en-US")+'</td><td><span class="tag '+riskClass(o[7])+'">'+o[7]+'</span></td></tr>';
+  });
+  pr+='</tbody></table>';
+  document.getElementById("peopleRank").innerHTML=pr;
+
+  window.peopleShow=function(i){
+    var o=PPL[i]; if(!o) return;
+    var hi=o[7]>25;
+    var h='<div class="card" style="margin-top:12px">';
+    h+='<h3>'+o[0]+' <span style="font-weight:400;color:var(--muted)">— '+o[1]+'</span></h3>';
+    h+='<div style="margin:4px 0 10px"><span class="tag t-mut">Phone: '+(o[2]||'—')+'</span> <span class="tag '+(hi?'t-pos':'t-neg')+'">Risk Score: '+o[7]+'</span></div>';
+    h+='<table style="max-width:640px"><tbody>';
+    h+='<tr><td style="text-align:left"><b>Customers lost</b></td><td>'+o[3]+'</td></tr>';
+    h+='<tr><td style="text-align:left"><b>Sale lost</b></td><td>'+o[4]+' MT · ৳'+o[5].toLocaleString("en-US")+'</td></tr>';
+    h+='<tr><td style="text-align:left"><b>Collection lost</b></td><td>৳'+o[6].toLocaleString("en-US")+'</td></tr>';
+    h+='</tbody></table>';
+    h+='<div style="margin-top:10px"><b style="color:var(--gold)">Lost customers</b><div style="color:#c9d7ea;font-size:13.5px;margin-top:3px">'+(o[8]||'—')+'</div></div>';
+    h+='<div style="margin-top:10px"><b style="color:var(--gold)">Evaluation (KPI vs Lost Analysis)</b><div style="color:#c9d7ea;font-size:13.5px;margin-top:3px">'+(o[9]||'—')+'</div></div>';
+    h+='<div style="margin-top:10px"><b style="color:var(--gold)">Need to Improve (People Analysis)</b><ul style="margin:4px 0 0;padding-left:18px;color:#c9d7ea;font-size:13.5px;line-height:1.6">';
+    h+='<li>Recover '+o[3]+' lost customer(s) — ৳'+o[5].toLocaleString("en-US")+' at risk</li>';
+    if(o[10]) h+='<li>'+o[10]+'</li>';
+    h+='</ul></div>';
+    h+='</div>';
+    var el=document.getElementById("peopleProfile");
+    el.innerHTML=h;
+    el.scrollIntoView({behavior:"smooth",block:"nearest"});
+  };
+})();
+
+/* ============ boot: deep link ============ */
+(function(){
+  var h=location.hash.slice(1);
+  if(TABS.indexOf(h)>=0) showTab(h);
+})();
+</script>
+</body>
+</html>
