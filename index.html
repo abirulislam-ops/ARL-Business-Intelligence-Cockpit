@@ -220,8 +220,7 @@
     <div class="note-box">
       <b>Basis:</b> Revenue is <b>net sales orders</b> (fiscal year July–June) extracted from each SBU's
       existing Product Intelligence Cockpit. <b>Gross-margin health</b> uses each SBU's GL P&L
-      (rev − COGS) for FY26-27. <b>Akij Ispat</b> is the 3-year price / market-share cockpit (no GL P&L in scope),
-      so its health is shown as n/a. Figures as of <b>24 Nov 2026</b>.
+      (rev − COGS) for FY26-27, pulled live from the iBOSDDD GL. Figures as of <b>25 Nov 2026</b>.
     </div>
   </section>
 
@@ -232,7 +231,7 @@
 <script>
 const SBUS = [
   { id:'ispat', name:'Akij Ispat', code:'ISPAT', bu:224, sector:'Steel · MS rod & rebar',
-    ytd:488.44, fy26:1604.20, fy25:1252.58, gm:null, status:'n',
+    ytd:488.44, fy26:1604.20, fy25:1252.58, gm:14.6, status:'g',
     ms:'2.92% steel share · #7 of 8',
     file:'sbu/ispat.html' },
   { id:'readymix', name:'Akij Ready Mix Concrete', code:'ARMCL', bu:175, sector:'Ready-mix concrete (RMC)',
